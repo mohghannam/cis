@@ -1,5 +1,5 @@
 ---
-- hosts: redhat7
+- hosts: all
   name: running or stopping the required the services
   tasks: 
   - name: Specifying a destination path
