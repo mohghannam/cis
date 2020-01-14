@@ -1,5 +1,4 @@
 ---
-- hosts: os
   tasks:
   - debug:
       msg: Starting certifying The dataCenter with CIS Standards
