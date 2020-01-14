@@ -1,5 +1,5 @@
 ---
-- hosts: redhat7
+- hosts: all
   tasks:
   - debug:
       msg: RollBacking The dataCenter From CIS Deployment
