@@ -4,7 +4,7 @@
 #Roll-Backing packages
 #####################
 - name: squashfs
-  hosts: redhat7
+  hosts: all
   tasks:
   - name: Specifying a destination path
     fetch:
