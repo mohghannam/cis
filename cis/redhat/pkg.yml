@@ -1,6 +1,6 @@
 ---
 - name: install the required rpms
-  hosts: os
+  hosts: all
   tasks:
   - name: install aide
     yum:
