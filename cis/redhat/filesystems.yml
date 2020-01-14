@@ -1,6 +1,6 @@
 ---
 - name: filesystems
-  hosts: redhat7
+  hosts: all
   tasks:
   - name: required configuration for Roll-Back
     copy: 
