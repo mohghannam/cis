@@ -1,5 +1,5 @@
 ---
-- hosts: redhat7
+- hosts: all
   name: This is for Roll-backing configuring-SSH PlayBook
   tasks:
   - name: set required perms on /etc/ssh/sshd_config
