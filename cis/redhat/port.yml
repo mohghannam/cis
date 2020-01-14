@@ -1,6 +1,6 @@
 ---
 - name: CIS playbook
-  hosts: os
+  hosts: all
   tasks:
   - name: disable autofs port
     firewalld:
