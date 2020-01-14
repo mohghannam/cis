@@ -1,5 +1,5 @@
 ---
-- hosts: os
+- hosts: all
   name: This is for configuring SSH for Redhat Enterprise linux Server 7.0
   tasks:
   - name: set required perms on /etc/ssh/sshd_config
