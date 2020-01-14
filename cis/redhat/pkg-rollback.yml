@@ -1,0 +1,110 @@
+---
+#...
+######################
+#Roll-Backing packages
+#####################
+- name: squashfs
+  hosts: redhat7
+  tasks:
+  - name: Specifying a destination path
+    fetch:
+      src: /usr/share/cis/tasks-status.yml
+      dest: /root/
+      flat: yes
+  - include_vars:
+     file: /root/tasks-status.yml
+     name: test
+
+  #- name: uninstall NTP
+  #  yum:
+  #     name: ntp
+  #     state: absent
+  #  when: test['status1']
+
+  - name: uninstall aide
+    yum:
+       name: aide
+       state: absent
+    when: test['status2']
+  
+  - name: uninstall prelink
+    yum:
+       name: prelink
+       state: absent
+    when: test['status3']
+
+  - name: uninstall setroubleshoot
+    yum:
+       name: setroubleshoot
+       state: present
+    when: test['status4']
+  
+  - name: uninstall mcstrans
+    yum:
+       name: mcstrans
+       state: absent
+    when: test['status5']
+
+
+  - name: uninstall libselinux
+    yum:
+       name: libselinux
+       state: absent
+    when: test['status6']
+  
+
+  - name: uninstall tcp_wrappers
+    yum:
+       name: tcp_wrappers
+       state: absent
+    when: test['status7']
+
+  - name: uninstall xorg-x11*
+    yum:
+       name: xorg-x11*
+       state: present
+    when: test['status8']
+
+  - name: uninstall ypbind
+    yum:
+       name: ypbind
+       state: present
+    when: test['status9']
+
+
+  - name: uninstall rsh
+    yum:
+       name: rsh
+       state: present
+    when: test['status10']
+  - name: uninstall libselinux
+    yum:
+       name: talk
+       state: present
+    when: test['status11']
+
+  - name: uninstall telnet
+    yum:
+       name: telnet
+       state: present
+    when: test['status12']
+
+  - name: uninstall 
+    yum:
+       name: openldap-client
+       state: present
+    when: test['status13']
+
+  - name: uninstall
+    yum:
+       name: rsyslog
+       state: absent
+    when: test['status14']
+
+  - name: uninstall
+    yum:
+       name: syslog-ng
+       state: absent
+    when: test['status15']
+
+
