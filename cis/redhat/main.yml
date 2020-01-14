@@ -1,5 +1,5 @@
 ---
-- hosts: 172.16.202.175
+- hosts: all
   tasks:
   - debug:
       msg: Starting certifying The dataCenter with CIS Standards
