@@ -1,5 +1,5 @@
 ---
-- hosts: os
+- hosts: all
   name: TMPFS playbook
   tasks:
     - name: Check whether TMPfs is mounted on dedicated partition

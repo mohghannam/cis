@@ -1,6 +1,6 @@
 ---
 - name: autofs
-  hosts: redhat7
+  hosts: all
   tasks:
   - include_vars:
      file: /root/cis/redhat/file-log.yml
