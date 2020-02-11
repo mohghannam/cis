@@ -1,0 +1,96 @@
+---
+- hosts: redhat7 test
+  tasks:
+  
+  - name: loading isofs module
+    shell: lsmod | grep dccp
+    register: isofs_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install isofs /bin/true
+      insertafter: yes
+      create: yes
+    when: isofs_check.stdout == ""
+  
+  - name: loading udf module
+    shell: lsmod | grep udf
+    register: udf_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install udf /bin/true
+      insertafter: yes
+      create: yes
+    when: udf_check.stdout == ""
+
+  - name: loading vfat module
+    shell: lsmod | grep vfat
+    register: vfat_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install vfat /bin/true
+      insertafter: yes
+      create: yes
+    when: vfat_check.stdout == ""
+
+  - name: loading dccp module
+    shell: lsmod | grep dccp
+    register: dccp_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install dccp /bin/true
+      insertafter: yes
+      create: yes
+    when: dccp_check.stdout == ""
+
+
+  - name: loading rds module
+    shell: lsmod | grep rds
+    register: rds_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install rds /bin/true
+      insertafter: yes
+      create: yes
+    when: rds_check.stdout == ""
+
+  - name: loading sctp module
+    shell: lsmod | grep sctp
+    register: sctp_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install sctp /bin/true
+      insertafter: yes
+      create: yes
+    when: sctp_check.stdout == ""
+
+  - name: loading tipc module
+    shell: lsmod | grep tipc
+    register: tipc_check
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install tipc /bin/true
+      insertafter: yes
+      create: yes
+    when: tipc_check.stdout == ""
+

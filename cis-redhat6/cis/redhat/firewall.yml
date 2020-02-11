@@ -1,0 +1,22 @@
+---
+- hosts: redhat7 test
+  tasks:
+  - name: Check whether firewalld is being used on the host
+    service_facts:
+    register: ansible_facts.services['firewalld.service']['state']
+
+  - name: Debug
+    debug:
+      msg: "the firewalld is stopped on the host"
+    when: ansible_facts.services['firewalld.service']['state'] == "stopped"
+
+  - name: check whether iptables is being used on the host
+    service_facts: 
+    register: ansible_facts.services['firewalld.service']['state']
+  
+  - name: Debug
+    debug:
+      msg: "the iptables is stopped on the host"
+    when: ansible_facts.services['iptables.service']['state'] == "stopped"
+
+

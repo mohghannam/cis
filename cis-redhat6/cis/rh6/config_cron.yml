@@ -1,0 +1,54 @@
+---
+- hosts: test
+  tasks:
+  - name: Ensure permissions on /etc/crontab are configured
+    file:
+       path: /etc/crontab
+       owner: root
+       group: root
+       mode: '0600'
+  - name: Ensure permissions on /etc/cron.hourly are configured
+    file:
+       path: /etc/cron.hourly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.daily are configured
+    file:
+       path: /etc/cron.daily
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.weekly are configured
+    file:
+       path: /etc/cron.weekly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.monthly are configured
+    file:
+       path: /etc/cron.monthly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.d are configured
+    file:
+       path: /etc/cron.d
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure at/cron is restricted to authorized users
+    file:
+       path: /etc/cron.deny
+       owner: root
+       group: root
+       mode: '0600'
+  - shell: ls /etc/cron.allow
+    register: f_exist
+    ignore_errors: yes
+  - file:
+       path: /etc/cron.allow
+       owner: root
+       group: root
+       mode: '0600'
+    when: f_exist.stdout != ""

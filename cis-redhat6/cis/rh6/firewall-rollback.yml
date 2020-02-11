@@ -1,0 +1,27 @@
+---
+- hosts: test
+  tasks:
+  - name: Specify a destination path
+    fetch:
+     src: /usr/share/cis/tasks-status.yml
+     dest: /root/
+     flat: yes
+  - include_vars:
+     file: /root/tasks-status.yml
+     name: test
+#########################################
+#ROLLBACK FOR RULE THAT DROPS ALL PACKETS
+#########################################
+
+  - name: default accept firewall policy
+    iptables:
+      chain: INPUT
+      policy: ACCEPT
+    iptables:
+      chain: OUTPUT
+      policy: ACCEPT
+    iptables:
+      chain: FORWARD
+      policy: ACCEPT
+    when: test['status101']
+

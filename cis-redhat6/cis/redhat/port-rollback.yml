@@ -1,0 +1,13 @@
+---
+- name: autofs
+  hosts: redhat7
+  tasks:
+  - include_vars:
+     file: /root/cis/redhat/file-log.yml
+     name: test
+  - name: open port
+    firewalld:
+       service: autofs
+       state: disabled
+       permanent: yes
+    when: test['status1']

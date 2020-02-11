@@ -1,0 +1,42 @@
+---
+- hosts: test
+  tasks:
+
+  - debug:
+     msg: "Starting to implement CIS standards"
+
+- name: intial setup phase
+  import_playbook: intial_setup.yml
+
+- name: Install required packages
+  import_playbook: pkg.yml
+
+- name: Service modifications
+  import_playbook: service.yml
+
+- name: Filesystems
+  import_playbook: filesystems.yml
+
+- name: mounts
+  import_playbook: mounts.yml
+
+- name: configure ssh
+  import_playbook: ssh_config.yml
+
+- name: configure cron
+  import_playbook: config_cron.yml
+
+- name: System Maintenance
+  import_playbook: system_maintenance.yml
+  
+- name: network config
+  import_playbook: net_config.yml
+
+- name: modules
+  import_playbook: modules.yml
+
+- name: logs
+  import_playbook: logs.yml
+
+- name: firewall
+  import_playbook: firewall.yml

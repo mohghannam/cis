@@ -1,0 +1,228 @@
+---
+- hosts: test
+  tasks:
+
+  - name: Ensure permissions on /etc/passwd are configured
+    file:
+      path: /etc/passwd
+      owner: root
+      group: root
+      mode: '644'
+
+  - name: Ensure permissions on /etc/shadow are configured
+    file:
+     path: /etc/shadow
+     owner: root
+     group: root
+     mode: '000'
+
+  - name: Ensure permissions on /etc/group are configured
+    file:
+      path: /etc/group
+      owner: root
+      group: root
+      mode: '644'
+
+
+  - name: Ensure permissions on /etc/gshadow are configured
+    file:
+      path: /etc/gshadow
+      owner: root
+      group: root
+      mode: 000
+
+  - name: Ensure permissions on /etc/passwd- are configured
+    file:
+      path: /etc/passwd-
+      owner: root
+      group: root
+      mode: '0644'
+
+
+  - name: Ensure permissions on /etc/shadow- are configured
+    file:
+      path: /etc/shadow-
+      owner: root
+      group: root
+      mode: '000'
+
+  - name: Ensure permissions on /etc/group- are configured
+    file:
+      path: /etc/group-
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Ensure permissions on /etc/gshadow- are configured
+    file:
+      path: /etc/gshadow-
+      owner: root
+      group: root
+      mode: '000'
+
+  - name: Ensure no world writable files exist
+    shell: find item.mount  -xdev -type f -perm -0002
+    loop: "{{ ansible_mounts }}"
+    ignore_errors: yes
+
+
+  - name: Ensure no unowned files or directories exist
+    shell: find item.mount -xdev -nouser
+    loop: "{{ ansible_mounts }}"
+    ignore_errors: yes
+
+  - name: Ensure no ungrouped files or directories exist
+    shell: find item.mount -xdev -nogroup
+    loop: "{{ ansible_mounts }}"
+    ignore_errors: yes
+
+  - name: Audit SUID executables
+    shell: find item.mount -xdev -type f -perm -4000
+    loop: "{{ ansible_mounts }}"
+    ignore_errors: yes
+
+  - name: Audit SGID executables
+    shell: find item.mount -xdev -type f -perm -2000
+    loop: "{{ ansible_mounts }}"
+    ignore_errors: yes
+
+  - name: Ensure no legacy "+" entries exist in /etc/passwd
+    shell: grep '^\+:' /etc/passwd
+    register: legacy_entry
+    ignore_errors: yes
+  - lineinfile:
+       path: /etc/passwd
+       line: '^\+:'
+       state: absent
+    when: legacy_entry.stdout != ""
+
+  - name: Ensure no legacy "+" entries exist in /etc/shadow
+    shell: grep '^\+:' /etc/shadow
+    register: legacy_entry_shadow
+    ignore_errors: yes
+  - lineinfile:
+       path: /etc/shadow
+       line: '^\+:'
+       state: absent
+    when: legacy_entry_shadow.stdout != ""
+
+
+  - name: Ensure no legacy "+" entries exist in /etc/group
+    shell: grep '^\+:' /etc/group
+    register: legacy_entry_group
+    ignore_errors: yes
+  - lineinfile:
+       path: /etc/group
+       line: '^\+:'
+       state: absent
+    when: legacy_entry_group.stdout != ""
+
+  - name: Ensure root is the only UID 0 account
+    shell: "cat /etc/passwd | awk -F: '($3 == 0) { print $1 }'"
+    register: root_check
+    ignore_errors: yes
+  - debug:
+      msg: "warnning: The root is not the only user with Account ID=0"
+    when: root_check.stdout != "root"
+
+  - name: Ensure root PATH Integrity
+    script: root_path_integrity.sh
+    register: path_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING ROOT PATH NEEDS TO BE FIXED"
+    when: path_check.stdout != ""
+
+  - name: Ensure all users' home directories exist
+    script: users_home_dir.sh
+    register: home_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS HAVE NO HOME DIRECTORIES"
+    when: home_check.stdout != ""
+
+  - name: Ensure users' home directories permissions are 750 or more restrictive
+    script: users_home_perms.sh
+    register: perm_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME HOME DIRECTORIES HAVE EXCESSIVE PERMISSIONS"
+    when: perm_check.stdout != ""
+
+  - name: Ensure users' dot files are not group or world writable
+    script: users_home_Not_world_writable.sh
+    register: writable_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS HOME DIRECTORIES ARE group or world writable"
+    when: writable_check.stdout != ""
+
+  - name: Ensure no users have .forward files
+    script: users_no_forward.sh
+    register: forward_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS HOME DIRECTORIES HAVE  .FORWARD FILE"
+    when: forward_check.stdout != ""
+
+
+  - name: Ensure no users have .netrc files
+    script: users_.netrc.sh
+    register: netrc_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS HOME DIRECTORIES HAVE .netrc FILE"
+    when: netrc_check.stdout != ""
+
+
+  - name: Ensure users' .netrc Files are not group or world accessible
+    script: users_netrc_not_world_accessible.sh
+    register: netrc_world_writable_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS .netrc ARE GROUP OR WORLD ACCESSIBLE"
+    when: netrc_world_writable_check.stdout != ""
+
+
+  - name: Ensure no users have .rhosts files
+    script: users_have_rhosts.sh
+    register: users_rhosts_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME USERS HAVE .rhosts FILES"
+    when: users_rhosts_check.stdout != ""
+
+  - name: Ensure all groups in /etc/passwd exist in /etc/group
+    script: ensure_groups.sh
+    register: groups_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....SOME GROUPS IN /etc/passwd DON'T EXIST IN /etc/group"
+    when: groups_check.stdout != ""
+
+
+  - name: Ensure no duplicate UIDs exis
+    script: no_duplicate_uids.sh
+    register: uids_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....THERE IS DUPLICATE UIDs"
+    when: uids_check.stdout != ""
+
+
+  - name: Ensure no duplicate user names exist
+    script: no_duplicate_usernames.sh
+    register: usernames_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....THERE IS DUPLICATE USERNAMES"
+    when: usernames_check.stdout != ""
+
+  - name: Ensure no duplicate group names exist
+    script: no_duplicate_groupnames.sh
+    register: groupnames_check
+    ignore_errors: yes
+  - debug:
+      msg: "*WARNING....THERE IS DUPLICATE GROUPNAMES"
+    when: groupnames_check.stdout != ""
+

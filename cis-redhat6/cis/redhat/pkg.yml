@@ -1,0 +1,194 @@
+---
+- name: install the required rpms
+  hosts: redhat7 test
+  tasks:
+  - name: install aide
+    yum:
+      name: aide
+      state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status2: {{ ansible_facts['changed'] }} ##aide"
+        state: present
+
+  - name: adding line in crontab for aide
+    cron:
+      name: aide check
+      weekday: '*'
+      minute: 0
+      hour: 5
+      user: root
+      job: "/usr/sbin/aide --check"
+      cron_file: aide_check
+
+  - name: install prelink
+    yum:
+     name: prelink
+     state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status3: {{ ansible_facts['changed'] }} ##prelink"
+        state: present
+
+
+  - name: restore binaries
+    shell: prelink -ua
+    register: result
+  - debug:
+      msg: "the outcome of restoring the binaries {{ result }}"
+
+  - name: remove prelink
+    yum:
+      name: prelink
+      state: absent
+  - name: remove setroubleshoot
+    yum:
+      name: setroubleshoot
+      state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status4: {{ ansible_facts['changed'] }} ##setroubleshoot"
+        state: present
+
+  - name: remove mcstrans
+    yum:
+      name: mcstrans
+      state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status5: {{ ansible_facts['changed'] }} ##mcstrans"
+        state: present
+
+  - name: remove libselinux
+    yum:
+      name: libselinux
+      state: present
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status6: {{ ansible_facts['changed'] }} ##libselinux"
+        state: present
+
+  - name: ensure tcp_wrappers is installed
+    yum:
+      name: tcp_wrappers
+      state: present
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status7: {{ ansible_facts['changed'] }} ##tcp_wrappers"
+        state: present
+
+  - name: verify the Xwindow package does not exist
+    yum:
+     name: xorg-x11*
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status8: {{ ansible_facts['changed'] }} ##xorg-x11"
+        state: present
+
+
+  - name: verify ypbind package does not exist
+    yum:
+     name: ypbind
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status9: {{ ansible_facts['changed'] }} ##ypbind"
+        state: present
+
+
+  - name: verify rsh package does not exist
+    yum:
+     name: rsh
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status10: {{ ansible_facts['changed'] }} ##rsh"
+        state: present
+
+  - name: verify talk package does not exist
+    yum:
+     name: talk
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status11: {{ ansible_facts['changed'] }} ##talk"
+        state: present
+
+  - name: verify telnet package does not exist
+    yum:
+     name: telnet
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status12: {{ ansible_facts['changed'] }} ##telnet"
+        state: present
+
+  - name: verify openldap-client package does not exist
+    yum:
+     name: openldap-client
+     state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status13: {{ ansible_facts['changed'] }} ##openldap-client"
+        state: present
+  
+  - name: Ensure rsyslog or syslog-ng is installed
+    yum:
+     name: rsyslog
+     state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status14: {{ ansible_facts['changed'] }} ##rsyslog action:installing"
+        state: present
+  - yum:
+     name: syslog-ng
+     state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status15: {{ ansible_facts['changed'] }} ##syslog-ng action:installing"
+        state: present
+
+    
+  
+  
