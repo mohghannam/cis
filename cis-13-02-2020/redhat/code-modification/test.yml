@@ -1,0 +1,13 @@
+---
+- hosts: os
+  gather_facts: no
+  tasks:
+
+  - name: check whether system is 32 or 64 arch
+    shell: getconf LONG_BIT
+    register: system_arch
+    ignore_errors: yes
+
+  - debug: 
+      msg: " {{ system_arch }} "
+
