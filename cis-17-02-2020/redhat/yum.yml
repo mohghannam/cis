@@ -1,0 +1,11 @@
+---
+- hosts: os
+  gather_facts: no
+  tasks:
+  - name: Ensure gpgcheck is globally activated (Scored)
+    replace:
+      path: /etc/yum.repos.d/*\.repo
+      regexp: '^gpgcheck=0'
+      replace: 'gpgcheck=1'
+      validate: 'yum repolist'
+ 
