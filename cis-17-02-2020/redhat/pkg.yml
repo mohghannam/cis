@@ -21,12 +21,13 @@
   - name: adding line in crontab for aide
     cron:
       name: aide check
-      weekday: '*'
-      minute: 0
-      hour: 5
-      user: root
+      weekday: "*"
+      minute: "1"
+      hour: "0"
+      user: "root"
       job: "/usr/sbin/aide --check"
-      cron_file: aide_check
+      cron_file: jobaid
+  - shell: crontab /etc/cron.d/jobaid
 
   - name: install prelink
     yum:

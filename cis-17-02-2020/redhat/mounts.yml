@@ -71,7 +71,7 @@
         path: "{{ item.mount }}"
         src: "{{ item.device }}"
         fstype: "{{ item.fstype }}"
-        opts: rw,relatime,data=ordered
+        opts: rw,relatime
         state: present
       loop: "{{ ansible_mounts }}"
       when: item.mount == "/var" 

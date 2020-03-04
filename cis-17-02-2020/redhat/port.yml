@@ -15,10 +15,6 @@
         line: "status1: {{ ansible_facts['changed'] }}"
         state: present
         create: yes
-  - fetch:
-      src: /root/file-log.yml
-      dest: /root/cis/redhat/
-      flat: yes
 #####################################
 #Secondplaybook
 ####################################

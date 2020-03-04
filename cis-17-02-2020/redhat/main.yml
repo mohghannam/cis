@@ -1,5 +1,6 @@
 ---
 - hosts: os
+  gather_facts: no
   tasks:
   - debug:
       msg: Starting certifying The dataCenter with CIS Standards
@@ -19,7 +20,6 @@
       state: touch
   - shell: "> /usr/share/cis/tasks-status.yml"
 
- 
 - name: Installing the Required Libraries and Packages
   import_playbook: pkg.yml
 
@@ -32,6 +32,9 @@
 - name: Configuring Filesystems Hardening
   import_playbook: mounts.yml
 
+- name: Audit Playbook
+  import_playbook: audit.yml
+
 - name: multiple diverse configuration
   import_playbook: world-wide.yml
 
@@ -41,6 +44,9 @@
 - name: Ports
   import_playbook: port.yml
  
+- name: Authentication Play
+  import_playbook: authentication.yml
+
 - name: configure Firewall 
   import_playbook: firewall.yml
 

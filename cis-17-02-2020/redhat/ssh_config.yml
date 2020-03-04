@@ -56,7 +56,6 @@
        line: X11Forwarding no
        state: present
        insertafter: yes
-       #when: x11_for.stdout == ""
 
   - name: Ensure SSH MaxAuthTries is set to 4 or less
     shell: grep "^MaxAuthTries" /etc/ssh/sshd_config
@@ -414,15 +413,6 @@
       dest: /usr/share/cis
       remote_src: yes
   
-  #- shell: grep pam_wheel.so /etc/pam.d/su
-    #register:  access_su
-    #ignore_errors: yes
-  #- lineinfile:
-       #path: /etc/pam.d/su
-       #line: auth     required    pam_wheel.so use_uid
-       #state: present
-       #insertafter: yes
-    #when: access_su.stdout == ""
   - lineinfile:
        path: /etc/pam.d/su
        regexp: "auth    required        pam_wheel.so    use_uid"
@@ -486,5 +476,3 @@
       owner: root
       group: root
       mode: '000'
-   
-  #- name:  
