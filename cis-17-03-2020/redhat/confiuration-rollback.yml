@@ -1,0 +1,129 @@
+---
+- hosts: os
+  name: Starting Roll-Backing Configuration Files
+  gather_facts: no
+  tasks:
+  - name: roll-back fstab
+    shell: ls /usr/share/cis/fstab
+    register: fstab_check
+    ignore_errors: yes
+  - copy: 
+     src: /usr/share/cis/fstab
+     dest: /etc
+     remote_src: yes
+    when: fstab_check.stdout != ""
+
+  - name: roll-back grub
+    copy: 
+      src: /usr/share/cis/grub.cfg
+      dest: /boot/grub2
+      remote_src: yes
+
+    copy: 
+      src: /usr/share/cis/grub
+      dest: /etc/default/
+      remote_src: yes
+
+  - name: roll-back selinux
+    copy:
+      src: /usr/share/cis/config
+      dest: /etc/selinux
+      remote_src: yes
+  
+  - name: roll-back /usr/lib/systemd/system/emergency.service
+    copy: 
+      src: /usr/share/cis/emergency.service
+      dest: /usr/lib/systemd/system
+      remote_src: yes
+   
+  - name: roll-back /etc/security/limits.conf
+    copy:
+      src: /usr/share/cis/limits.conf
+      dest: /etc/security/
+      remote_src: yes
+
+  - name: roll-back kernel params
+    copy:
+      src: /usr/share/cis/sysctl.conf
+      dest: /etc
+      remote_src: yes
+
+  - name: Roll-back /etc/issue 
+    copy:
+      src: /usr/share/cis/issue
+      dest: /etc
+      remote_src: yes
+  - name: roll-back /etc/issue.net
+    copy:
+      src: /usr/share/cis/issue.net
+      dest: /etc/issue.net
+      remote_src: yes
+  - name: roll-back /etc/motd
+    copy:
+      src: /usr/share/cis/motd
+      dest:  /etc
+      remote_src: yes
+  - name: roll-back /etc/hosts.allow
+    copy:
+      src: /usr/share/cis/hosts.allow
+      dest: /etc
+      remote_src: yes
+
+  - name: roll-back /etc/hosts.deny 
+    copy:
+      src: /usr/share/cis/hosts.deny
+      dest: /etc
+      remote_src: yes
+  
+  - name: reconfigure /etc/dconf/db/gdm.d/*
+    shell: ls -d /etc/dconf/db/gdm.d
+    register: gdm_dir_check
+    ignore_errors: yes
+  - copy:
+      src: /usr/share/cis/gdm.d
+      dest: /etc/dconf/db/gdm.d
+      remote_src: yes   
+    when: gdm_dir_check.stdout != ""
+    
+  - name: check ntp configuration
+    shell: ls /usr/share/cis/ntp.conf
+    register: ntp_file_check
+    ignore_errors: yes
+  - copy:
+      src: /usr/share/cis/ntp.conf
+      dest: /etc
+      remote_src: yes
+    when: ntp_file_check.stdout != "" 
+
+  - name: configure auditd daemon to halt the system when the audit logs are full.
+    shell: ls /usr/share/cis/auditd.conf
+    register: audit_file_check
+    ignore_errors: yes
+  - copy:
+      src: /usr/share/cis/auditd.conf
+      dest: /etc/audit
+      remote_src: yes
+    when: audit_file_check.stdout != ""
+
+  - name: roll-back /etc/audit/audit.rules
+    shell: ls /usr/share/cis/audit.rules
+    register: audit_rules_file_check
+    ignore_errors: yes
+
+  - copy:
+      src: /usr/share/cis/audit.rules
+      dest: /etc/audit/
+    when: audit_rules_file_check.stdout != ""
+
+  - name: roll-back /etc/syslog-ng/syslog-ng.conf
+    shell: ls /usr/share/cis/syslog-ng.conf
+    register: file_exist
+    ignore_errors: yes
+
+  - copy: 
+      src: /usr/share/cis/syslog-ng.conf
+      dest: /etc/syslog-ng
+    when: file_exist.stdout != ""
+    
+    
+

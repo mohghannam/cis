@@ -1,0 +1,21 @@
+---
+- hosts: os
+  name: This is for Roll-backing audit playbook
+  tasks:
+  - name: set required perms on /etc/ssh/sshd_config
+    copy: 
+      src: /usr/share/cis/audit.rules
+      dest: /etc/audit/rules.d/audit.rules
+      remote_src: yes
+
+  - name: restoring audit configuration
+    copy: 
+     src: /usr/share/cis/auditd.conf
+     dest: /etc/audit/auditd.conf
+     remote_src: yes
+  
+  - name: Restoring grub configuration 
+    copy:
+     src: /usr/share/cis/grub.cfg
+     dest: /boot/grub2/grub.cfg
+     remote_src: yes

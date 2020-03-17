@@ -1,0 +1,33 @@
+---
+- name: squashfs
+  hosts: os
+  tasks:
+  - name: Specifying a destination path
+    fetch:
+      src: /usr/share/cis/tasks-status.yml
+      dest: /root/
+      flat: yes
+  - include_vars:
+     file: /root/tasks-status.yml
+     name: test
+
+  - name: load module
+    modprobe:
+       name: squashfs
+       state: present
+    when: test['status2']
+
+  - name: load module
+    modprobe:
+       name: udf
+       state: present
+    when: test['status3']
+
+
+  - name: load module
+    modprobe:
+       name: vfat
+       state: present
+    when: test['status4']
+
+

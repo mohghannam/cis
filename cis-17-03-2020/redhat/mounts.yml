@@ -1,0 +1,139 @@
+---
+- hosts: os
+  name: TMPFS playbook
+  tasks:
+    - name: making sure the back-up prerequisites are done
+      file:
+      path: /usr/share/cis
+      state: directory
+      owner: root
+      group: root
+      mode: '0744'
+
+    - file:
+      path: /usr/share/cis/tasks-status.yml
+      owner: root
+      group: root
+      mode: '0644'
+      state: touch
+
+    - name: Check whether TMPfs is mounted on dedicated partition
+      debug: 
+         msg: "The TMP is mounted on dedicated partition"
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/tmp"
+
+    - name: configure tmpfs with the required options
+      copy:
+         src: /root/cis/redhat/tmp.mount
+         dest: /etc/systemd/system/local-fs.target.wants/tmp.mount
+         #remote_src: yes
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/tmp"
+
+    - name: remounting TMPFS 
+      mount:
+        path: /tmp
+        src: "{{ item.device }}" 
+        fstype: "{{ item.fstype }}"
+        opts: nodev,noexec,nosuid
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/tmp"
+      #debug:
+      #  msg: " the device of tmp is {{ item.device }} "
+      #loop: "{{ ansible_mounts }}"
+      #when: item.mount == "/tmp"
+    - name: Check whether /var/tmp is mounted on dedicated partition
+      debug:
+         msg: "The /var/tmp is mounted on dedicated partition"
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/var/tmp"
+    - name: remounting /var/tmp
+      mount:
+        path: /var/tmp
+        src: "{{ item.device }}"
+        fstype: tmpfs
+        opts: nodev,noexec,nosuid
+        state: present
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/var/tmp"
+    - name: Check whether /var/log/audit is mounted on dedicated partition
+      debug:
+         msg: "The  {{ item }} is mounted on dedicated partition"
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/var/log/audit"
+
+    - name: Check whether /home is mounted on dedicated partition
+      debug:
+         msg: "The  {{ item }} is mounted on dedicated partition"
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/home"
+
+    - name: Check whether /home is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: rw,nodev,relatime
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/home"
+
+
+    - name: Check whether /var is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: rw,relatime
+        state: present
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/var" 
+
+
+    - name: Check whether /dev/shm is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: defaults,nodev,nosuid,noexec
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.mount == "/dev/shm"
+
+    - name: REMOVABLE DEVICES /dev/sr0 is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: defaults,nodev,noexec,nosuid
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.device == "/dev/sr0"
+
+    - name: REMOVABLE DEVICES /dev/sr1 is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: defaults,nodev,noexec,nosuid
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.device == "/dev/sr1"
+
+    - name: REMOVABLE DEVICES /dev/kmem is mounted on dedicated partition
+      mount:
+        path: "{{ item.mount }}"
+        src: "{{ item.device }}"
+        fstype: "{{ item.fstype }}"
+        opts: defaults,nodev,noexec,nosuid
+        state: mounted
+      loop: "{{ ansible_mounts }}"
+      when: item.device == "/dev/sr1"
+
+  
+      
+    
+
+      

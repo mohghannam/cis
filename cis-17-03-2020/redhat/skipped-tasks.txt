@@ -1,0 +1,9 @@
+1-Ensure GPG keys are configured (Not Scored)
+2-Disable SSH root Login
+3-Disable Wireless in the systems
+4-Registering systems to satellite and configuring repositories.
+5-configuring to add servers in /etc/host.allow
+6-configuring to add servers in /etc/host.deny
+7-Adding NTP servers to chronyd or ntp
+
+

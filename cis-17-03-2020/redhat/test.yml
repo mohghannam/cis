@@ -1,0 +1,7 @@
+---
+- hosts: os
+  gather_facts: yes
+  tasks:
+  - name: printing the collected info
+    debug:
+      msg: "##############print: {{ ansible_facts['selinux'] }} "

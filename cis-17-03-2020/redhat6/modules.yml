@@ -1,0 +1,303 @@
+---
+- hosts: redhat7 test
+  tasks:
+  
+  - name: is isofs loaded
+    shell: lsmod | grep isofs
+    register: isofs_check
+    ignore_errors: yes
+
+  - name: is isofs disabled
+    shell: modprobe -v -n isofsi | grep '/bin/true'
+    register: isofs_disabled
+    ignore_errors: yes
+    
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install isofs /bin/true
+      insertafter: yes
+      create: yes
+    when: isofs_check.stdout != "" or isofs_disabled == ""
+
+  - name: unload module
+    shell: rmmod isofs
+    when: isofs_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is squashfs loaded
+    shell: lsmod | grep squashfs
+    register: squash_check
+    ignore_errors: yes
+
+  - name: is squashfs disabled
+    shell: modprobe -n -v squashfs | grep '/bin/true'
+    register: squash_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install squashfs /bin/true
+      insertafter: yes
+      create: yes
+    when: squash_check.stdout != "" or squash_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod squashfs
+    when: squash_check.stdout != ""
+
+  - name: is udf loaded
+    shell: lsmod | grep udf
+    register: udf_check
+    ignore_errors: yes
+
+  - name: is udf disabled
+    shell: modprobe -n -v udf | grep '/bin/true'
+    register: udf_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install udf /bin/true
+      insertafter: yes
+      create: yes
+    when: udf_check.stdout != "" or udf_disabled == ""
+
+  - name: unload module
+    shell: rmmod udf
+    when: udf_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is vfat loaded
+    shell: lsmod | grep vfat
+    register: vfat_check
+    ignore_errors: yes
+
+  - name: is vfat disabled
+    shell: modprobe -n -v vfat | grep '/bin/true'
+    register: vfat_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install vfat /bin/true
+      insertafter: yes
+      create: yes
+    when: vfat_check.stdout != "" or vfat_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod vfat
+    when: vfat_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is dccp loaded
+    shell: lsmod | grep dccp
+    register: dccp_check
+    ignore_errors: yes
+
+  - name: is dccp disabled
+    shell: modprobe -n -v dccp | grep '/bin/true'
+    register: dccp_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install dccp /bin/true
+      insertafter: yes
+      create: yes
+    when: dccp_check.stdout != "" or dccp_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod dccp
+    when: dccp_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is rds loaded
+    shell: lsmod | grep rds
+    register: rds_check
+    ignore_errors: yes
+
+  - name: is rds disabled
+    shell: modprobe -n -v rds | grep '/bin/true'
+    register: rds_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install rds /bin/true
+      insertafter: yes
+      create: yes
+    when: rds_check.stdout != "" or rds_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod rds
+    when: rds_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is sctp loaded
+    shell: lsmod | grep sctp
+    register: sctp_check
+    ignore_errors: yes
+
+  - name: is sctp disabled
+    shell: modprobe -n -v sctp | grep '/bin/true'
+    register: sctp_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install sctp /bin/true
+      insertafter: yes
+      create: yes
+    when: sctp_check.stdout != "" or sctp_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod sctp
+    when: sctp_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is tipc loaded
+    shell: lsmod | grep tipc
+    register: tipc_check
+    ignore_errors: yes
+
+  - name: is tipc disabled
+    shell: modprobe -n -v tipc | grep '/bin/true'
+    register: tipc_disabled
+    ignore_errors: yes
+
+  - name: adding it in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install tipc /bin/true
+      insertafter: yes
+      create: yes
+    when: tipc_check.stdout != "" or tipc_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod tipc
+    when: tipc_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is cramfs loaded
+    shell: lsmod | grep cramfs
+    register: cramfs_check
+    ignore_errors: yes
+
+  - name: is cramfs disabled
+    shell: modprobe -n -v cramfs | grep '/bin/true'
+    register: cramfs_disabled
+    ignore_errors: yes
+
+  - name: adding cramfs in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install cramfs /bin/true
+      insertafter: yes
+      create: yes
+    when: cramfs_check.stdout != "" or cramfs_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod cramfs
+    when: cramfs_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is freevxfs loaded
+    shell: lsmod | grep freevxfs
+    register: freevxfs_check
+    ignore_errors: yes
+
+  - name: is freevxfs disabled
+    shell: modprobe -n -v freevxfs | grep '/bin/true'
+    register: freevxfs_disabled
+    ignore_errors: yes
+
+  - name: adding freevxfs in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install freevxfs /bin/true
+      insertafter: yes
+      create: yes
+    when: freevxfs_check.stdout != "" or freevxfs_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod freevxfs
+    when: freevxfs_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is jffs2 loaded
+    shell: lsmod | grep jffs2
+    register: jffs2_check
+    ignore_errors: yes
+
+  - name: is jffs2 disabled
+    shell: modprobe -n -v jffs2 | grep '/bin/true'
+    register: jffs2_disabled
+    ignore_errors: yes
+
+
+  - name: adding jffs2 in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install jffs2 /bin/true
+      insertafter: yes
+      create: yes
+    when: jffs2_check.stdout != "" or jffs2_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod jjfs2
+    when: jffs2_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is hfs loaded
+    shell: lsmod | grep hfs
+    register: hfs_check
+    ignore_errors: yes
+
+  - name: is hfs disabled
+    shell: modprobe -n -v hfs | grep '/bin/true'
+    register: hfs_disabled
+    ignore_errors: yes
+
+  - name: adding hfs in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install hfs /bin/true
+      insertafter: yes
+      create: yes
+    when: hfs_check.stdout != "" or hfs_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod hfs
+    when: hfs_check.stdout != ""
+    ignore_errors: yes
+
+  - name: is hfsplus loaded
+    shell: lsmod | grep hfsplus
+    register: hfsplus_check
+    ignore_errors: yes
+
+  - name: is hfsplus disabled
+    shell: modprobe -n -v hfsplus | grep '/bin/true'
+    register: hfsplus_disabled
+    ignore_errors: yes
+
+  - name: adding hfsplus in /etc/modprobe.d/CIS.conf
+    lineinfile:
+      path: /etc/modprobe.d/CIS.conf
+      line: install hfsplus /bin/true
+      insertafter: yes
+      create: yes
+    when: hfsplus_check.stdout != "" or hfsplus_disabled.stdout == ""
+
+  - name: unload module
+    shell: rmmod hfsplus
+    when: hfsplus_check.stdout != ""
+    ignore_errors: yes
+

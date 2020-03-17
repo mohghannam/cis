@@ -1,0 +1,141 @@
+---
+- hosts: test
+  tasks:
+  - name: Ensure permissions on /etc/crontab are configured
+    file:
+       path: /etc/crontab
+       owner: root
+       group: root
+       mode: '0600'
+  - name: Ensure permissions on /etc/cron.hourly are configured
+    file:
+       path: /etc/cron.hourly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.daily are configured
+    file:
+       path: /etc/cron.daily
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.weekly are configured
+    file:
+       path: /etc/cron.weekly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.monthly are configured
+    file:
+       path: /etc/cron.monthly
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure permissions on /etc/cron.d are configured
+    file:
+       path: /etc/cron.d
+       owner: root
+       group: root
+       mode: '0700'
+  - name: Ensure at/cron is restricted to authorized users
+    file:
+       path: /etc/cron.deny
+       owner: root
+       group: root
+       mode: '0600'
+    ignore_errors: yes
+
+  - name: check /etc/cron.allow exists
+    shell: ls /etc/cron.allow | grep 'No such file'
+    ignore_errors: yes
+    register: f_exists
+
+  - name: create /etc/cron.allow
+    file:
+      path: /etc/cron.allow
+      state: touch
+      owner: root
+      group: root
+      mode: '0600'
+    when: f_exists.stderr != ""
+
+
+  - name: check /etc/at.allow exists
+    shell: ls /etc/at.allow | grep 'No such file'
+    ignore_errors: yes     
+    register: at_exists
+
+  - name: create /etc/at.allow
+    file:
+      path: /etc/at.allow
+      state: touch       
+      owner: root
+      group: root
+      mode: '0600'
+    when: at_exists.stderr != ""
+
+
+  - name: check /etc/cron.deny exists
+    shell: ls /etc/cron.deny | grep 'No such file'
+    ignore_errors: yes
+    register: f_exists
+
+  - name: copy /etc/cron.deny
+    copy:
+     src: /etc/cron.deny      
+     remote_src: yes
+     dest: /usr/share/cis
+     force: no
+    when: f_exists.stderr == ''
+
+  - name: remove /etc/cron.deny
+    file:
+     path: /etc/cron.deny
+     state: absent
+    when: f_exists.stderr ==  ''
+
+
+  - name: check /etc/at.deny exists
+    shell: ls /etc/at.deny | grep 'No such file'
+    ignore_errors: yes
+    register: at_deny
+
+  - name: copy /etc/at.deny
+    copy:
+     src: /etc/at.deny
+     remote_src: yes
+     dest: /usr/share/cis
+     force: no
+    when: at_deny.stderr == ''
+
+  - name: remove /etc/at.deny
+    file:
+     path: /etc/at.deny
+     state: absent
+    when: at_deny.stderr ==  ''
+
+  - name: File system integrity, root crontab
+    shell: crontab -u root -l | grep aide
+    register: crontab_out
+    ignore_errors: yes
+
+  - debug:
+     var: crontab_out
+
+  - name: File system intergrity, root
+    shell: grep -r aide /etc/cron.* /etc/crontab
+    register: cronfiles
+    ignore_errors: yes
+
+  - debug:
+     var: cronfiles
+
+
+  - name: set crontab for aide
+    cron:
+     name: "aide crontab"
+     minute: 0
+     hour: 5
+     job: /usr/sbin/aide --check
+    when: crontab_out.stdout == '' and cronfiles.stdout == ''
+

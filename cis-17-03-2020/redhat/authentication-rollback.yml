@@ -1,0 +1,59 @@
+---
+- hosts: os
+  name: This is for Roll-backing Authentication playbook
+  tasks:
+  - name: restoring system auth
+    copy: 
+      src: /usr/share/cis/system-auth
+      dest: /etc/pam.d/system-auth
+      remote_src: yes
+
+  - name: restoring audit password auth
+    copy: 
+     src: /usr/share/cis/password-auth
+     dest: /etc/pam.d/password-auth
+     remote_src: yes
+  
+  - name: Restoring emergency service
+    copy:
+     src: /usr/share/cis/emergency.service
+     dest: /usr/lib/systemd/system/emergency.service
+     remote_src: yes
+
+
+  - name: Restoring limits
+    copy:
+     src: /usr/share/cis/limits.conf
+     dest: /etc/security/limits.conf
+     remote_src: yes
+
+  - name: Restoring /etc/passwd
+    copy:
+     src: /usr/share/cis/passwd
+     dest: /etc/passwd
+     remote_src: yes
+
+
+  - name: Restoring /etc/shadow
+    copy:
+     src: /usr/share/cis/shadow
+     dest: /etc/shadow
+     remote_src: yes
+
+
+  - name: Restoring /etc/group
+    copy:
+     src: /usr/share/cis/group
+     dest: /etc/group
+     remote_src: yes
+
+  - name: Restoring /etc/securetty
+    copy:
+     src: /usr/share/cis/securetty
+     dest: /etc/securetty
+     remote_src: yes
+
+
+
+
+

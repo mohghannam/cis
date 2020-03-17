@@ -1,0 +1,24 @@
+---
+- hosts: test
+  tasks:
+  
+  - debug:
+     msg: "Starting rollback from CIS deployment"
+
+- name: Firewall Rollback
+  import_playbook: firewall-rollback.yml
+
+- name: rollback config files
+  import_playbook: rollback1.yml
+
+- name: filesystems rollback
+  import_playbook: filesystems-rollback.yml
+
+- name: servie and packages rollback
+  import_playbook: service-rollback.yml
+
+- name: modules rollback
+  import_playbook: modules-rollback.yml
+
+- name: ssh rollback
+  import_playbook: ssh_config-rollback.yml 

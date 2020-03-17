@@ -1,0 +1,170 @@
+---
+- hosts: test
+  name: Rolling Back
+  tasks:
+   - name: roll back selinux
+     copy:
+      src: /usr/share/cis/config
+      dest: /etc/selinux
+      remote_src: yes
+
+   - name: roll back grub
+     copy:
+      src: /usr/share/cis/grub.conf
+      dest: /boot/grub/
+      remote_src: yes
+
+   - name: roll back /etc/sysconfig/init
+     copy:
+      src: /usr/share/cis/init
+      dest: /etc/sysconfig
+      remote_src: yes
+
+
+   - name: roll-back /etc/security/limits.conf
+     copy:
+      src: /usr/share/cis/limits.conf
+      dest: /etc/security/
+      remote_src: yes
+
+   - name: Roll-back /etc/issue
+     copy:
+      src: /usr/share/cis/issue
+      dest: /etc
+      remote_src: yes
+   
+   - name: roll-back /etc/issue.net
+     copy:
+      src: /usr/share/cis/issue.net
+      dest: /etc/issue.net
+      remote_src: yes
+  
+   - name: roll-back /etc/motd
+     copy:
+      src: /usr/share/cis/motd
+      dest:  /etc
+      remote_src: yes
+
+
+   - name: roll-back /etc/hosts.allow
+     copy:
+      src: /usr/share/cis/hosts.allow
+      dest: /etc
+      remote_src: yes
+
+   - name: roll-back /etc/hosts.deny
+     copy:
+      src: /usr/share/cis/hosts.deny
+      dest: /etc
+      remote_src: yes
+
+   - name: reconfigure /etc/dconf/db/gdm.d/*
+     shell: ls -d /etc/dconf/db/gdm.d
+     register: gdm_dir_check
+     ignore_errors: yes
+   - copy:
+      src: /usr/share/cis/gdm.d
+      dest: /etc/dconf/db/gdm.d
+      remote_src: yes
+     when: gdm_dir_check.stdout != ""
+
+
+   - name: check ntp configuration
+     shell: ls /usr/share/cis/ntp.conf
+     register: ntp_file_check
+     ignore_errors: yes
+   - copy:
+      src: /usr/share/cis/ntp.conf
+      dest: /etc
+      remote_src: yes
+     when: ntp_file_check.stdout != ""
+
+
+
+   - name: configure auditd daemon to halt the system when the audit logs are full.
+     shell: ls /usr/share/cis/auditd.conf
+     register: audit_file_check
+     ignore_errors: yes
+   - copy:
+      src: /usr/share/cis/auditd.conf
+      dest: /etc/audit
+      remote_src: yes
+     when: audit_file_check.stdout != ""
+
+
+   - name: roll-back /etc/audit/audit.rules
+     shell: ls /usr/share/cis/audit.rules
+     register: audit_rules_file_check
+     ignore_errors: yes
+
+   - copy:
+      src: /usr/share/cis/audit.rules
+      dest: /etc/audit/
+      remote_src: yes
+     when: audit_rules_file_check.stdout != ""
+
+   - name: roll-back /etc/syslog-ng/syslog-ng.conf
+     shell: ls /usr/share/cis/syslog-ng.conf
+     register: file_exist
+     ignore_errors: yes
+
+   - copy:
+      src: /usr/share/cis/syslog-ng.conf
+      dest: /etc/syslog-ng
+      remote_src: yes
+     when: file_exist.stdout != ""
+
+   - name: rollback motd
+     copy:
+      src: /usr/share/cis/motd
+      remote_src: yes
+      dest: /etc/motd
+
+   - name: rollback postfix
+     copy: 
+      src: /usr/share/cis/main.cf
+      remote_src: yes
+      dest: /etc/postfix/main.cf
+
+   - name: rollback rsyslog.conf
+     copy:
+      src: /usr/share/cis/rsyslog.conf
+      remote_src: yes
+      dest: /etc/rsyslog.conf
+
+   - name: rollback at.deny
+     copy:
+      src: /usr/share/cis/at.deny
+      remote_src: yes
+      dest: /etc/at.deny
+
+   - name: rollback /etc/cron.deny
+     copy:
+      src: /usr/share/cis/cron.deny
+      remote_src: yes
+      dest: /etc/cron.deny
+
+   - name: rollback aide check
+     shell: crontab -u root -l
+     register: aide_check
+
+   - debug:
+      var: aide_check
+
+   - name: rollback aide crontab
+     cron:
+      name: "aide crontab"
+      state: absent
+     when: aide_check.stdout != ''
+
+   - name: rollback /etc/securetty
+     copy:
+      src: /usr/share/cis/securetty
+      dest: /etc/securetty
+      remote_src: yes
+
+   - name: rollabck sysctl.conf
+     copy:
+      src: /usr/share/cis/sysctl.conf
+      dest: /etc/sysctl.conf
+      remote_src: yes

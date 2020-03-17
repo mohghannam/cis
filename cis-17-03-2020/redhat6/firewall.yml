@@ -1,0 +1,37 @@
+---
+- hosts: test
+  tasks:
+  - name: check whether iptables is being used on the host
+    shell: service iptables status | grep 'not running'
+    register: status_check
+    ignore_errors: yes
+
+  - name: iptables status
+    debug:
+     msg: "iptables service is not running"
+    when: status_check.stdout != ""
+
+
+######################################
+#APPLY DEFAULT RULE TO DROP PACKETS
+######################################
+  - pause:
+     prompt: 'Please confirm you want to apply a drop policy on all chains. Press Enter to continue or press ctrl+c then press "A" to abort'
+
+  - name: Ensure default deny firewall policy for OUTPUT
+    iptables:
+     chain: INPUT
+     jump: DROP
+    iptables:
+     chain: OUTPUT
+     jump: DROP
+    iptables:
+     chain: FORWARD
+     jump: DROP
+    register: ansible_facts
+    when: status_check.stdout == ""
+  - lineinfile:
+     path: /usr/share/cis/tasks-status.yml
+     line: "status101: {{ansible_facts['changed'] }} ###Dropping All Chain Packets"
+     state: present
+

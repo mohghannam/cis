@@ -1,0 +1,179 @@
+---
+- name: filesystems
+  hosts: os
+  tasks:
+  - name: required configuration for Roll-Back
+    copy:
+     src: /etc/fstab
+     dest: /usr/share/cis/fstab
+     remote_src: yes
+
+  - name: Ensure separate partition exists for /tmp by starting tmp.mount serviceEnsure
+    systemd:
+     name: tmp.mount
+     enabled: yes
+     state: started
+     masked: no
+    register: ansible_facts
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status200: {{ ansible_facts['changed'] }} ##tmpmount service was started"
+        state: present
+
+  - shell: mount | grep "/tmp "
+    register: tmp_mount_check
+    ignore_errors: yes
+
+  - debug:
+       msg: "the data about mounting /tmp#### {{ tmp_mount_check.stdout }}"
+
+  - name: check /tmp
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: nodev,nosuid,rw,noexec,relatime
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/tmp"
+
+  - name: check /var/tmp
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,nosuid,nodev,noexec,relatime
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/var/tmp"
+
+  - name: check /var
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,relatime,data=ordered
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/var"
+
+
+
+  - name: check /var/log
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,relatime,data=ordered
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/var/log"
+
+
+
+
+
+  - name: check /var/log/audit
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,relatime,data=ordered
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/var/log/audit"
+
+
+  - name: check /home
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,nodev,relatime,data=ordered
+      state: mounted
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/home"
+
+
+  - name: check /dev/shm
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: rw,nosuid,nodev,noexec,relatime
+      state: mounted
+
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.device == "/dev/shm"
+
+###################
+#Removable devices
+###################
+  - name: check /dev/sr0
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: nosuid,nodev,noexec
+      state: mounted
+
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.device == "/dev/sr0"
+
+  - name: check /dev/sr1
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: nosuid,nodev,noexec
+      state: mounted
+
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.device == "/dev/sr1"
+
+  - name: check /dev/sr2
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: nosuid,nodev,noexec
+      state: mounted
+
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.device == "/dev/sr2"
+
+
+  - name: check /dev/kmem
+    mount:
+      path: "{{ item.mount }}"
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      opts: nosuid,nodev,noexec
+      state: mounted
+
+
+    register: ansible_facts
+    loop: "{{ ansible_mounts }}"
+    when: item.device == "/dev/kmem"
+
+

@@ -1,0 +1,61 @@
+
+PLAY [Configure audit Rules] *****************************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************************************
+ok: [172.16.202.144]
+
+TASK [configure auditd daemon to halt the system when the audit logs are full.] **************************************************************
+ok: [172.16.202.144]
+
+TASK [replace] *******************************************************************************************************************************
+ok: [172.16.202.144]
+
+TASK [replace] *******************************************************************************************************************************
+ok: [172.16.202.144]
+
+TASK [replace] *******************************************************************************************************************************
+ok: [172.16.202.144]
+
+TASK [Ensure audit logs are not automatically deleted] ***************************************************************************************
+changed: [172.16.202.144]
+
+TASK [lineinfile] ****************************************************************************************************************************
+changed: [172.16.202.144]
+
+TASK [ensure auditing for process] ***********************************************************************************************************
+fatal: [172.16.202.144]: FAILED! => {"changed": true, "cmd": "grep \"^\\s*linux\" /boot/grub2/grub.cfg | grep -i audit=1", "delta": "0:00:00.007455", "end": "2020-03-03 16:24:15.941580", "msg": "non-zero return code", "rc": 1, "start": "2020-03-03 16:24:15.934125", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [lineinfile] ****************************************************************************************************************************
+[WARNING]: The value True (type bool) in a string field was converted to u'True' (type string). If this does not look like what you expect,
+quote the entire value to ensure it does not change.
+changed: [172.16.202.144]
+
+TASK [check whether system is 32 or 64 arch] *************************************************************************************************
+changed: [172.16.202.144]
+
+TASK [configure auditing system if system arch is 32] ****************************************************************************************
+skipping: [172.16.202.144]
+
+TASK [configure auditing system if system arch is 64] ****************************************************************************************
+ok: [172.16.202.144]
+
+TASK [lineinfile] ****************************************************************************************************************************
+ok: [172.16.202.144]
+
+TASK [Ensure use of privileged commands is collected adding all the resulting lines in /etc/audit/rules.d/audit.rules] ***********************
+skipping: [172.16.202.144] => (item={u'block_used': 36506, u'uuid': u'6d5cce6d-bf55-48bc-9adf-cb0f30bced53', u'size_total': 1063256064, u'block_total': 259584, u'mount': u'/boot', u'block_available': 223078, u'size_available': 913727488, u'fstype': u'xfs', u'inode_total': 524288, u'inode_available': 523962, u'device': u'/dev/sda1', u'inode_used': 326, u'block_size': 4096, u'options': u'rw,seclabel,relatime,attr2,inode64,noquota'}) 
+skipping: [172.16.202.144] => (item={u'block_used': 1981880, u'uuid': u'2017-07-11-01-39-24-00', u'size_total': 4058890240, u'block_total': 1981880, u'mount': u'/mpoint', u'block_available': 0, u'size_available': 0, u'fstype': u'iso9660', u'inode_total': 0, u'inode_available': 0, u'device': u'/dev/sr0', u'inode_used': 0, u'block_size': 2048, u'options': u'ro,nosuid,nodev,noexec,relatime'}) 
+skipping: [172.16.202.144] => (item={u'block_used': 29459, u'uuid': u'3611e0d8-107e-4920-9e29-81a8561ca2ea', u'size_total': 3202351104, u'block_total': 781824, u'mount': u'/var', u'block_available': 752365, u'size_available': 3081687040, u'fstype': u'xfs', u'inode_total': 1568768, u'inode_available': 1567284, u'device': u'/dev/mapper/rhel-var', u'inode_used': 1484, u'block_size': 4096, u'options': u'rw,seclabel,relatime,attr2,inode64,noquota'}) 
+skipping: [172.16.202.144] => (item={u'block_used': 230819, u'uuid': u'e01db26f-50b9-4965-99fa-382b35561a90', u'size_total': 10726932480, u'block_total': 2618880, u'mount': u'/', u'block_available': 2388061, u'size_available': 9781497856, u'fstype': u'xfs', u'inode_total': 5242880, u'inode_available': 5215969, u'device': u'/dev/mapper/rhel-root', u'inode_used': 26911, u'block_size': 4096, u'options': u'rw,seclabel,relatime,attr2,inode64,noquota'}) 
+skipping: [172.16.202.144] => (item={u'block_used': 8240, u'uuid': u'12911668-c116-4ae8-80cc-4d49070a4ede', u'size_total': 4284481536, u'block_total': 1046016, u'mount': u'/home', u'block_available': 1037776, u'size_available': 4250730496, u'fstype': u'xfs', u'inode_total': 2097152, u'inode_available': 2097144, u'device': u'/dev/mapper/rhel-home', u'inode_used': 8, u'block_size': 4096, u'options': u'rw,seclabel,nodev,relatime,attr2,inode64,noquota'}) 
+
+TASK [service] *******************************************************************************************************************************
+changed: [172.16.202.144]
+
+RUNNING HANDLER [update_grub] ****************************************************************************************************************
+changed: [172.16.202.144]
+
+PLAY RECAP ***********************************************************************************************************************************
+172.16.202.144             : ok=14   changed=7    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+
