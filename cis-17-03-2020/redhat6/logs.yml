@@ -121,7 +121,8 @@
            ##################
            -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
            -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
-           -a always,exit -F arch=b64 -S clock_settime -k time-change -a always,exit -F arch=b32 -S clock_settime -k time-change 
+           -a always,exit -F arch=b64 -S clock_settime -k time-change
+           -a always,exit -F arch=b32 -S clock_settime -k time-change 
            -w /etc/localtime -p wa -k time-change
            #################
            ##Ensur events modify date and time are collected
@@ -163,7 +164,8 @@
            -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k acces
            -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
            -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
-           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access                         ####################
+           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+           ####################
            #Ensure successful file system mounts are collected
            ####################
            -a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
@@ -195,6 +197,12 @@
            -e 2
        state: present
     when: system_arch.stdout == "64"
+
+  - name: restart audit service
+    service:
+     name: auditd
+     state: restarted
+
 
   - name: Ensure use of privileged commands is collected
     shell: find item.mount -xdev \( -perm -4000 -o -perm -2000 \) -type f | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged" }'
