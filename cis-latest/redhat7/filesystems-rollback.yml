@@ -1,0 +1,36 @@
+---
+- hosts: os
+  name: Starting Roll-Back
+  tasks:
+ #####################################
+ #Getting the back-up status
+ #####################################
+  - name: Specifying a destination path
+    fetch:
+      src: /usr/share/cis/tasks-status.yml
+      dest: /root/
+      flat: yes
+  - include_vars:
+     file: /root/tasks-status.yml
+     name: test
+
+  ##############################################
+  #Rollbacking /etc/fstab
+  ##############################################
+  - name: roll-back fstab
+    shell: ls /usr/share/cis/fstab
+    register: fstab_check
+    ignore_errors: yes
+  - copy:
+     src: /usr/share/cis/fstab
+     dest: /etc
+     remote_src: yes
+    when: fstab_check.stdout != ""
+
+  - name: rolling-back tmp.mount service
+    systemd:
+     name: tmp.mount
+     enabled: no
+     state: stopped
+     masked: yes
+    when: test['status200']

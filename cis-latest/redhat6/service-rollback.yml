@@ -1,0 +1,303 @@
+---
+- hosts: test
+  name: running stopping required services
+  tasks:
+  - name: Getting status file
+    fetch:
+     src: /usr/share/cis/tasks-status.yml
+     dest: /root/
+     flat: yes
+  - include_vars:
+     file: /root/tasks-status.yml
+     name: test
+
+  - name: uninstall aide
+    yum:
+       name: aide
+       state: absent
+    when: test['status2']
+    ignore_errors: yes
+  - name: uninstall prelink
+    yum:
+       name: prelink
+       state: absent
+    when: test['status3']
+    ignore_errors: yes
+
+  - name: uninstall setroubleshoot
+    yum:
+       name: setroubleshoot
+       state: present
+    when: test['status4']
+    ignore_errors: yes
+
+  - name: uninstall mcstrans
+    yum:
+       name: mcstrans
+       state: absent
+    when: test['status5']
+    ignore_errors: yes
+
+  - name: uninstall libselinux
+    yum:
+       name: libselinux
+       state: absent
+    when: test['status6']
+    ignore_errors: yes
+
+  - name: uninstall tcp_wrappers
+    yum:
+       name: tcp_wrappers
+       state: absent
+    when: test['status7']
+    ignore_errors: yes
+
+  - name: rhnsd
+    shell: chkconfig rhnsd on
+    when: test['status20']
+    ignore_errors: yes
+
+  - name: chargen-dgram
+    shell: chkconfig chargen-dgram on
+    when: test['status21'] 
+    ignore_errors: yes
+
+  - name: chargen-stream
+    shell: chkconfig chargen-stream on
+    when: test['status22']
+    ignore_errors: yes
+
+  - name: daytime-dgram
+    shell: chkconfig daytime-dgram on
+    when: test['status23'] 
+    ignore_errors: yes
+
+  - name: daytime-stream
+    shell: chkconfig daytime-stream on
+    when: test['status24'] 
+    ignore_errors: yes
+
+  - name: discard-dgram
+    shell: chkconfig rhnsd on
+    when: test['status25']
+    ignore_errors: yes
+
+  - name: discard-stream
+    shell: chkconfig discard-stream on
+    when: test['status26'] 
+    ignore_errors: yes
+
+  - name: echo-dgram
+    shell: chkconfig echo-dgram on
+    when: test['status27']
+    ignore_errors: yes
+
+  - name: echo-stream
+    shell: chkconfig echo-stream on
+    when: test['status28']
+    ignore_errors: yes
+
+  - name: time-dgram
+    shell: chkconfig time-dgram on
+    when: test['status29']
+    ignore_errors: yes
+
+  - name: time-stream
+    shell: chkconfig time-stream on
+    when: test['status30']
+    ignore_errors: yes
+
+  - name: rexec
+    shell: chkconfig rexec on
+    when: test['status31']
+    ignore_errors: yes
+
+  - name: rsh
+    shell: chkconfig rsh on
+    when: test['status32']
+    ignore_errors: yes
+
+  - name: rlogin
+    shell: chkconfig rlogin on
+    when: test['status33']
+    ignore_errors: yes
+
+  - name: talk
+    shell: chkconfig talk on
+    when: test['status34']
+    ignore_errors: yes
+
+  - name: telnet
+    shell: chkconfig telnet on
+    when: test['status35']
+    ignore_errors: yes
+
+  - name: tftp
+    shell: chkconfig tftp on
+    when: test['status36']
+    ignore_errors: yes
+
+  - name: rsync
+    shell: chkconfig rsync on
+    when: test['status37']
+    ignore_errors: yes
+
+  - name: xinetd
+    shell: chkconfig xinetd on
+    when: test['status38'] 
+    ignore_errors: yes
+
+  - name: avahi-daemon
+    shell: chkconfig avahi-daemon on
+    when: test['status39']
+    ignore_errors: yes
+
+  - name: cups
+    shell: chkconfig cups on
+    when: test['status40']
+    ignore_errors: yes
+
+  - name: dhcpd
+    shell: chkconfig dhcpd on
+    when: test['status41']
+    ignore_errors: yes
+
+  - name: slapd
+    shell: chkconfig slapd on
+    when: test['status42']
+    ignore_errors: yes
+
+  - name: nfs
+    shell: chkconfig nfs on
+    when: test['status43']
+    ignore_errors: yes
+
+  - name: rpcbind
+    shell: chkconfig rpcbind on
+    when: test['status44']
+    ignore_errors: yes
+
+  - name: named
+    shell: chkconfig named on
+    when: test['status45']
+    ignore_errors: yes
+
+  - name: vsftpd
+    shell: chkconfig vsftpd on
+    when: test['status46']
+    ignore_errors: yes
+
+  - name: httpd
+    shell: chkconfig httpd on
+    when: test['status47']
+    ignore_errors: yes
+
+  - name: dovecot
+    shell: chkconfig dovecot on
+    when: test['status48']
+    ignore_errors: yes
+
+  - name: smb
+    shell: chkconfig smb on
+    when: test['status49']
+    ignore_errors: yes
+
+  - name: squid
+    shell: chkconfig squid on
+    when: test['status50']
+    ignore_errors: yes
+
+  - name: snmpd
+    shell: chkconfig snmpd on
+    when: test['status51']
+    ignore_errors: yes
+
+  - name: ypserv
+    shell: chkconfig ypserv on
+    when: test['status52']
+    ignore_errors: yes
+
+  - name: ypbind
+    shell: yum install ypbind -y
+    when: test['status53']
+    ignore_errors: yes
+
+  - name: rsh install
+    shell: yum install rsh -y
+    when: test['status54']
+    ignore_errors: yes
+
+  - name: talk install
+    shell: yum install talk -y
+    when: test['status55']
+    ignore_errors: yes
+
+  - name: telnet install
+    shell: yum install telnet -y
+    when: test['status56']
+    ignore_errors: yes
+
+  - name: openldap-clients install
+    shell: yum install openldap-clients -y
+    when: test['status57']
+    ignore_errors: yes
+
+  - name: crond disabled
+    shell: chkconfig crond off
+    when: test['status58']
+    ignore_errors: yes
+
+  - name: autofs
+    shell: chkconfig autofs on
+    when: test['status59']
+    ignore_errors: yes
+
+  - name: auditd
+    shell: chkconfig auditd off
+    when: test['status60']
+    ignore_errors: yes
+
+  - name: rsyslogd
+    shell: chkconfig rsyslogd off
+    when: test['status61']
+    ignore_errors: yes
+
+  - name: syslog-ng
+    shell: chkconfig syslog-ng off
+    when: test['status62']
+    ignore_errors: yes
+
+  - name: X window system
+    shell: yum install xorg-x11* -y
+    when: test['status63']
+    ignore_errors: yes
+
+  - name: iptables
+    shell: yum remove iptables -y
+    when: test['status64']
+    ignore_errors: yes
+
+  - name: tcp_wrappers-libs
+    shell: yum rmeove tcp_wrappers-libs -y
+    when: test['status65']
+    ignore_errors: yes
+
+  - name: uninstall
+    yum:
+       name: rsyslog
+       state: absent
+    when: test['status14']
+    ignore_errors: yes
+  - name: uninstall
+    yum:
+       name: syslog-ng
+       state: absent
+    when: test['status15']
+    ignore_errors: yes
+
+  - name: uninstall chrony
+    yum:
+      name: chrony
+      state: absent
+    when: test['status1']
+    ignore_errors: yes
