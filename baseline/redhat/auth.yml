@@ -1,0 +1,37 @@
+---
+- hosts: os
+  gather_facts: not
+  tasks:
+
+  - name: Ensure password hashing algorithm is SHA-512
+    shell: egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth  | grep sha512
+    register: sha_algo
+    ignore_errors: yes
+  - debug:
+     msg: "######### {{ sha_algo }} "
+  #- lineinfile:
+  #    path: /etc/pam.d/system-auth
+  #    line: "{{ sha_algo.stdout }}"
+  #    state: absent
+  - lineinfile:
+      path: /etc/pam.d/system-auth
+      line: password sufficient pam_unix.so sha512
+      state: present
+
+
+  - name: Ensure password hashing algorithm is SHA-512
+    shell: egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/password-auth  | grep sha512
+    register: sha_algo
+    ignore_errors: yes
+  - debug:
+     msg: "######### {{ sha_algo }} "
+  #- lineinfile:
+  #    path: /etc/pam.d/password-auth
+  #    line: "{{ sha_algo.stdout }}"
+  #    state: absent
+  - lineinfile:
+      path: /etc/pam.d/password-auth
+      line: password sufficient pam_unix.so sha512
+      state: present
+
+

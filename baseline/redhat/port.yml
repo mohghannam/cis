@@ -1,0 +1,21 @@
+---
+- name: CIS playbook
+  hosts: os
+  tasks:
+  - name: disable autofs port
+    firewalld:
+       service: autofs
+       state: disabled
+       permanent: yes
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status1: {{ ansible_facts['changed'] }}"
+        state: present
+        create: yes
+#####################################
+#Secondplaybook
+####################################
+       
