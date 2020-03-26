@@ -1,0 +1,175 @@
+---
+- name: install the required rpms
+  hosts: redhat7 test
+  tasks:
+
+  - name: check whether gpgcheck is configured correctly
+    shell:   grep ^gpgcheck /etc/yum.repos.d/*
+    register: result_2
+  - debug:
+      msg: "{{ result_2 }}"
+
+  - name: check whether gpgcheck is configured correctly
+    shell:  rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'
+    register: result_3
+    ignore_errors: yes
+  - debug:
+      msg: "{{ result_3 }}"
+
+
+  - name: install aide
+    yum:
+      name: aide
+      state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status2: {{ ansible_facts['changed'] }} ##aide"
+        state: present
+
+  - name: adding line in crontab for aide
+    cron:
+      name: aide check
+      weekday: '*'
+      minute: 0
+      hour: 5
+      user: root
+      job: "/usr/sbin/aide --check"
+      cron_file: aide_check
+
+  - name: install prelink
+    yum:
+     name: prelink
+     state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status3: {{ ansible_facts['changed'] }} ##prelink"
+        state: present
+
+
+  - name: restore binaries
+    shell: prelink -ua
+    register: result
+  - debug:
+      msg: "the outcome of restoring the binaries {{ result }}"
+
+  - name: remove prelink
+    yum:
+      name: prelink
+      state: absent
+  - name: remove setroubleshoot
+    yum:
+      name: setroubleshoot
+      state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status4: {{ ansible_facts['changed'] }} ##setroubleshoot"
+        state: present
+
+  - name: remove mcstrans
+    yum:
+      name: mcstrans
+      state: absent
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status5: {{ ansible_facts['changed'] }} ##mcstrans"
+        state: present
+
+  - name: remove libselinux
+    yum:
+      name: libselinux
+      state: present
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status6: {{ ansible_facts['changed'] }} ##libselinux"
+        state: present
+
+  - name: ensure tcp_wrappers is installed
+    yum:
+      name: tcp_wrappers
+      state: present
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status7: {{ ansible_facts['changed'] }} ##tcp_wrappers"
+        state: present
+ 
+  - name: Ensure rsyslog or syslog-ng is installed
+    yum:
+     name: rsyslog
+     state: present
+    register: ansible_facts
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status14: {{ ansible_facts['changed'] }} ##rsyslog action:installing"
+        state: present
+  - yum:
+     name: syslog-ng
+     state: present
+    register: ansible_facts
+    ignore_errors: yes
+
+  - debug:
+     msg: " the data are:  {{ ansible_facts['changed'] }}"
+  - lineinfile:
+        path: /usr/share/cis/tasks-status.yml
+        line: "status15: {{ ansible_facts['changed'] }} ##syslog-ng action:installing"
+        state: present
+
+    
+  
+  - name: Verfiy if ntp or chrony is installed
+    shell: rpm -q ntp | grep 'not installed'
+    register: ntp_check
+    ignore_errors: yes
+  - shell: rpm -q chrony | grep 'not installed'
+    register: chrony_check
+    ignore_errors: yes
+
+  - name: install ntp
+    shell: yum install ntp -y
+    when: ntp_check.stdout != "" and chrony_check.stdout != ""
+    register: ansible_facts
+
+
+  - debug:
+     msg: " the data are: {{ ansible_facts['changed'] }}"
+  - lineinfile:
+     path: /usr/share/cis/tasks-status.yml
+     line: "status1: {{ ansible_facts['changed'] }} ##ntp installed"
+
+
+  - name: check ntp configuration
+    copy:
+     src: /etc/ntp.conf
+     dest: /usr/share/cis
+     remote_src: yes
+
+  - shell: grep "^restrict" /etc/ntp.conf
+    register: ntp_config_check
+    ignore_errors: yes
+
+  - name: configure ntp
+    blockinfile:
+     path: /etc/ntp.conf
+     insertafter:
+     content:
+      restrict -4 default kod nomodify notrap nopeer noquery
+      restrict -6 default kod nomodify notrap nopeer noquery
+ 

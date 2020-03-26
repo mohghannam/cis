@@ -1,0 +1,14 @@
+---
+- hosts: test
+  tasks:
+   - name: copy /etc/securetty
+     copy:
+      src: /etc/securetty
+      dest: /usr/share/cis/securetty
+      remote_src: yes
+      force: no
+
+   - name: remove root access from securetty
+     shell: echo "" > /etc/securetty
+     
+     

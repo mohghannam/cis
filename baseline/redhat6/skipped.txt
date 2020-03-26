@@ -1,0 +1,15 @@
+1.4.2 Ensure bootloader password is set
+	- need to create a password
+1.5.2 Ensure XD/NX support enabled (not scored)
+1.6.1.6: Ensure no uncofined daemons exist
+1.7.1 Ensure message of the day is configured properly
+	- verify contents match site policy?
+3.6.4 Ensure outbound and established connections configured (not scored)
+3.7 Ensure wireless interfaces disabled
+4.1.1.1 Ensure audit log storage size is configured
+	- depends on site policy
+4.2.1.2 Ensure logging is configured (not scored)
+5.4.1.5
+5.4.2
+5.5 not scored
+6.1 not scored

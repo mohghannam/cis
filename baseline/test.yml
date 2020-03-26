@@ -1,22 +1,38 @@
----
-- hosts: localhost
-  name: Executing Tasks
-
+- hosts: os
+  gather_facts: yes
   tasks:
-  - name: checking the handler 
+  - name:
     debug:
-      msg: "Nice to run the hundler"
+      msg: "{{ ansible_date_time.date }}........{{ ansible_date_time.time }} "
 
-    notify: 
-      - sayhello
+  - name: appending word in line
+    shell: egrep -i '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth
+    register: check_sys_lvm
+    ignore_errors: yes
+  - debug:
+      msg: "{{ check_sys_lvm }} "
 
 
-  handlers:
-  - name: sayhello
-    debug:
-      msg: "this is the handler"
+  - name: adding kernel boot parm
+    lineinfile:
+      path: /etc/pam.d/system-auth
+      line: "{{ check_sys_lvm['stdout'] }}"
+      state: absent
+ 
+  - shell: "> /usr/share/cis/temp_system-auth"
+  - name: write in temp file
+    lineinfile:
+      path: /usr/share/cis/temp_system-auth
+      line: "{{ check_sys_lvm['stdout'] }}"
+      state: present
+      create: yes
+  - shell: cat /usr/share/cis/temp_system-auth | cut -d "\"" -f 2
+    register: line
 
-  tasks: 
-  - name: running another task
-    debug:
-      msg: "i am runnig after the handler"
+  - debug:
+      msg: "{{ line['stdout'] }}"
+  - lineinfile:
+      path: /etc/pam.d/system-auth
+      line: "{{line['stdout']}} remember=5"
+      state: present
+    

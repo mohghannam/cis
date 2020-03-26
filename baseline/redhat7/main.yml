@@ -1,9 +1,12 @@
 ---
 - hosts: os
-  gather_facts: no
+  gather_facts: yes
   tasks:
   - debug:
       msg: Starting certifying The dataCenter with CIS Standards
+
+  - debug:
+      msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} "
 
   - name: Needed configuration for Roll-Back
     file:
@@ -46,6 +49,9 @@
  
 - name: Authentication Play
   import_playbook: authentication.yml
+
+- name: Configuring Kernel parameters
+  import_playbook: kernel-params.yml
 
 - name: configure Firewall 
   import_playbook: firewall.yml

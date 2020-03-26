@@ -3,25 +3,31 @@
   gather_facts: yes
   name: Configure audit Rules
   tasks:
-  - name: configure auditd daemon to halt the system when the audit logs are full.
+  - name: backup default audit rules.
     copy:
       src: /etc/audit/rules.d/audit.rules
       dest: /usr/share/cis
       remote_src: yes
 
+  - name: backup default audit configuration
+    copy: 
+      src: /etc/audit/auditd.conf
+      dest: /usr/share/cis
+      remote_src: yes
+
   - replace:
-     path: /etc/audit/rules.d/audit.rules
+     path: /etc/audit/auditd.conf
      regexp: '(^admin_space_left_action\s)(.*)?$'
      replace: 'admin_space_left_action = halt'
      backup: yes
   - replace:
-     path: /etc/audit/rules.d/audit.rules
+     path: /etc/audit/auditd.conf
      regexp: '(^action_mail_acct\s)(.*)?$'
      replace: 'action_mail_acct = root'
      backup: yes
   
   - replace:
-       path: /etc/audit/rules.d/audit.rules
+       path: /etc/audit/auditd.conf
        regexp: '(^space_left_action\s)(.*)?$'
        replace: 'space_left_action = email' 
        backup: yes 
@@ -37,21 +43,6 @@
       state: present
 
 
-  - name: ensure auditing for process
-    shell: grep "^\s*linux" /boot/grub2/grub.cfg | grep -i audit=1
-    register: audit_process
-    ignore_errors: yes
-  #- pause:
-     #seconds: 3
-  - lineinfile:
-      path: /etc/default/grub
-      line: GRUB_CMDLINE_LINUX="audit=1"
-      insertafter: yes
-      state: present
-    when: audit_process.stdout == ""
-    ignore_errors: yes
-    notify: update_grub
- 
   - name: check whether system is 32 or 64 arch
     shell: getconf LONG_BIT
     register: system_arch
@@ -247,8 +238,3 @@
       name: auditd
       state: reloaded
 
-  handlers:
-    - name: update_grub
-      shell:  grub2-mkconfig > /boot/grub2/grub.cfg
-
-  

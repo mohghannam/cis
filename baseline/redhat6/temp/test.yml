@@ -1,0 +1,40 @@
+---
+- name: test
+  hosts: test
+  tasks:
+   - name: sticky bit on all worl-wirtable directories
+     shell : df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+     register: output
+   
+   - debug:
+      var: output
+
+   - name: set sticky bit
+     shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+     when: output.stdout != ''
+
+
+   - name: File system integrity, root crontab
+     shell: crontab -u root -l | grep aide
+     register: crontab_out
+     ignore_errors: yes
+
+   - debug:
+      var: crontab_out
+
+   - name: File system intergrity, root 
+     shell: grep -r aide /etc/cron.* /etc/crontab
+     register: cronfiles
+     ignore_errors: yes
+
+   - debug:
+      var: cronfiles
+
+
+   - name: set crontab for aide
+     cron:
+      name: "aide crontab" 
+      minute: 0
+      hour: 5
+      job: /usr/sbin/aide --check
+     when: crontab_out.stdout == '' and cronfiles.stdout == ''

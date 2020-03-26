@@ -1,0 +1,298 @@
+---
+- hosts: test
+  tasks: 
+  - name: audit logs not automatically deleted
+    shell: grep 'max_log_file_action = keep_logs' /etc/audit/auditd.conf
+    register: max_log_check
+    ignore_errors: yes
+  - lineinfile:
+        path: /etc/audit/auditd.conf
+        regexp: '^max_log_file_action'
+        line: max_log_file_action = keep_logs
+        insertafter: yes
+        state: present
+    when: max_log_check.stdout == ""
+
+  - name: copy audit.rules
+    copy:
+     src: /etc/audit/audit.rules
+     dest: /usr/share/cis
+  
+
+  - name: check whether system is 32 or 64 arch
+    shell: getconf LONG_BIT
+    register: system_arch
+    ignore_errors: yes
+  - name: configure auditing system if system arch is 32
+    blockinfile:
+       path: /etc/audit/audit.rules
+       insertafter: "^# END"
+       content: |
+           -w /var/log/wtmp -p wa -k logins
+           -w /var/log/btmp -p wa -k logins
+           -w /var/run/utmp -p wa -k session
+           #################
+           #Ensure session initiation information
+           #################
+           -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+           -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+           -a always,exit -F arch=b64 -S clock_settime -k time-change
+           -a always,exit -F arch=b32 -S clock_settime -k time-change
+           -w /etc/localtime -p wa -k time-change
+           -w /var/log/lastlog -p wa -k logins
+           -w /var/run/faillock/ -p wa -k logins
+           #################
+           #Ensur events modify date and time are collected
+           #################
+           -w /var/log/lastlog -p wa -k logins
+           -w /var/run/faillock/ -p wa -k logins
+           ##################
+           #Monitor Login
+           ##################
+           -w /etc/selinux/ -p wa -k MAC-policy
+           -w /usr/share/selinux/ -p wa -k MAC-policy
+           ##################
+           #MAC-policy
+           ##################
+           -w /etc/group -p wa -k identity
+           -w /etc/passwd -p wa -k identity
+           -w /etc/gshadow -p wa -k identity
+           -w /etc/shadow -p wa -k identity
+           -w /etc/security/opasswd -p wa -k identity
+           -w /etc/selinux/ -p wa -k MAC-policy
+           -w /usr/share/selinux/ -p wa -k MAC-policy
+           -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+           -w /etc/issue -p wa -k system-locale
+           -w /etc/issue.net -p wa -k system-locale
+           -w /etc/hosts -p wa -k system-locale
+           -w /etc/sysconfig/network -p wa -k system-locale
+           -w /etc/sysconfig/network-scripts/ -p wa -k system-locale
+           ###################
+           #FOR 32 SYSTEM ARCH
+           ###################
+           -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+           #####################
+           #Ensure unsuccessful unauthorized file access attempts are collected
+           ####################
+           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access 
+           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access
+           ##################
+           #Ensure successful file system mounts are collected
+           ##################
+           -a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts 
+           ##################
+           #Ensure file deletion events by users are collected
+           ##################
+           -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete
+           #################
+           #Ensure changes to system administration scope
+           #################
+           -w /etc/sudoers -p wa -k scope
+           -w /etc/sudoers.d/ -p wa -k scope
+           ####################
+           #Ensure system administrator actions
+           ####################
+           -w /var/log/sudo.log -p wa -k actions
+           ####################
+           #Ensure kernel module loading and unloading is collected
+           ####################
+           -w /sbin/insmod -p x -k modules
+           -w /sbin/rmmod -p x -k modules
+           -w /sbin/modprobe -p x -k modules
+           -a always,exit -F arch=b32 -S init_module -S delete_module -k modules
+           ####################
+           #Ensure the audit configuration is immutable
+           ####################
+           -e 2
+       state: present
+    when: system_arch.stdout == "32"
+  - name: configure auditing system if system arch is 64
+    blockinfile:
+       path: /etc/audit/audit.rules
+       insertafter: "^# END"
+       content: |
+           -w /var/log/wtmp -p wa -k logins
+           -w /var/log/btmp -p wa -k logins
+           -w /var/run/utmp -p wa -k session
+           #################
+           ##Ensure session initiation information
+           ##################
+           -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+           -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+           -a always,exit -F arch=b64 -S clock_settime -k time-change
+           -a always,exit -F arch=b32 -S clock_settime -k time-change 
+           -w /etc/localtime -p wa -k time-change
+           #################
+           ##Ensur events modify date and time are collected
+           #################
+           -w /var/log/lastlog -p wa -k logins
+           -w /var/run/faillock/ -p wa -k logins
+           ##################
+           ##Monitor Login
+           ###################
+           -w /etc/selinux/ -p wa -k MAC-policy
+           -w /usr/share/selinux/ -p wa -k MAC-policy
+           ##################
+           ##MAC-policy
+           ###################
+           -w /etc/group -p wa -k identity
+           -w /etc/passwd -p wa -k identity
+           -w /etc/gshadow -p wa -k identity
+           -w /etc/shadow -p wa -k identity
+           -w /etc/security/opasswd -p wa -k identity
+           -a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+           -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+           -w /etc/issue -p wa -k system-locale
+           -w /etc/issue.net -p wa -k system-locale
+           -w /etc/hosts -p wa -k system-locale
+           -w /etc/sysconfig/network -p wa -k system-locale
+           -w /etc/sysconfig/network-scripts/ -p wa -k system-locale
+           ##############
+           #For 64 systems arch
+           ##############
+           -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+           -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+           ######################
+           #Ensure unsuccessful unauthorized file access attempts are collected
+           ######################
+           -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k acces
+           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+           -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+           -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+           ####################
+           #Ensure successful file system mounts are collected
+           ####################
+           -a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
+           -a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
+           ####################
+           #Ensure file deletion events by users are collected
+           ####################
+           -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+           -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+           ####################
+           #Ensure changes to system administration scope
+           ####################
+           -w /etc/sudoers -p wa -k scope
+           -w /etc/sudoers.d/ -p wa -k scope
+           ####################
+           #Ensure system administrator actions
+           ####################
+           -w /var/log/sudo.log -p wa -k actions
+           ####################
+           #Ensure kernel module loading and unloading is collected
+           #####################
+           -w /sbin/insmod -p x -k modules
+           -w /sbin/rmmod -p x -k modules
+           -w /sbin/modprobe -p x -k modules
+           -a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+           ####################
+           #Ensure the audit configuration is immutable
+           ####################
+           -e 2
+       state: present
+    when: system_arch.stdout == "64"
+
+  - name: restart audit service
+    service:
+     name: auditd
+     state: restarted
+
+
+  - name: Ensure use of privileged commands is collected
+    shell: find item.mount -xdev \( -perm -4000 -o -perm -2000 \) -type f | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=500 -F auid!=4294967295 -k privileged" }'
+    loop: "{{ ansible_mounts }}"
+    when: item.mount == "/tmp"
+
+
+  - name: Ensure syslog-ng default file permissions configured
+    shell: ls /etc/syslog-ng/syslog-ng.conf
+    register: file_exist
+    ignore_errors: yes
+  - copy:
+      src: /etc/syslog-ng/syslog-ng.conf
+      dest: /usr/share/cis
+      remote_src: yes
+    when: file_exist.stdout != ""
+  - shell: grep ^options /etc/syslog-ng/syslog-ng.conf
+    register: syslog_def_check
+    ignore_errors: yes
+  - lineinfile:
+       path: /etc/syslog-ng/syslog-ng.conf
+       line: options { chain_hostnames(off); flush_lines(0); perm(0640); stats_freq(3600); threaded(yes); };
+       insertafter: yes
+       state: present
+    when: file_exist.stdout != "" and syslog_def_check.stdout == ""
+
+  - name: Ensure syslog-ng is configured to send logs to a remote log host
+    blockinfile:
+       path: /etc/syslog-ng/syslog-ng.conf
+       content: |
+          destination logserver { tcp("logfile.example.com" port(514)); };
+          log { source(src); destination(logserver); };
+       insertafter: yes
+       state: present
+    when: file_exist.stdout != "" and syslog_def_check.stdout == ""
+    notify:
+       - name: reload the syslog-ng configuration
+
+
+  - name: Ensure remote syslog-ng messages are only accepted on designated log hosts
+    blockinfile:
+       path: /etc/syslog-ng/syslog-ng.conf
+       content: |
+           source net{ tcp(); };
+           destination remote { file("/var/log/remote/${FULLHOST}-log"); };
+           log { source(net); destination(remote); };
+       insertafter: yes
+       state: present
+    when: file_exist.stdout != "" and syslog_def_check.stdout == ""
+    notify:
+       - name: reload the syslog-ng configuration
+
+
+  - name: Ensure permissions on all logfiles are configured
+    shell: find /var/log -type f -exec chmod g-wx,o-rwx {} +
+
+  - name: configure auditd daemon to halt the system when the audit logs are full.
+    copy:
+     src: /etc/audit/auditd.conf
+     dest: /usr/share/cis
+     remote_src: yes
+  - lineinfile:
+     path: /etc/audit/auditd.conf
+     backrefs: yes
+     backup: yes
+     regexp: '(^admin_space_left_action)' 
+     line: '\1 = halt'
+     state: present
+     insertafter: yes
+
+  - lineinfile:
+      path: /etc/audit/auditd.conf
+      backrefs: yes
+      backup: yes
+      regexp: '(^space_left_action)'
+      line: '\1 = email'
+      state: present
+      insertafter: yes
+
+  - lineinfile:
+      path: /etc/audit/auditd.conf
+      backrefs: yes
+      backup: yes
+      regexp: '(^action_mail_accts)'
+      line: '\1 = root'
+      state: present
+      insertafter: yes
+
+  handlers:
+   - name: reload the syslog-ng configuration
+     shell: pkill -HUP rsyslogd
+
+
