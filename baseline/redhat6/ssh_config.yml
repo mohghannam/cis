@@ -46,16 +46,37 @@
        state: present
     when: log_level.stdout == ""
   
-  - name: Ensure SSH X11 forwarding is disabled
-    shell: grep "^X11Forwarding no" /etc/ssh/sshd_config
-    register: x11_for
+
+  - name: X11
+    shell: grep '^X11Forwarding' /etc/ssh/sshd_config
+    register: x11var
     ignore_errors: yes
-  - lineinfile:
-       path: /etc/ssh/sshd_config
-       line: X11Forwarding no
-       state: present
-       insertafter: yes
-    when: x11_for.stdout == ""
+
+  - name: add X11Forwarding
+    lineinfile:
+     line: X11Forwarding no
+     state: present
+     path: /etc/ssh/sshd_config
+    when: x11var.stdout == ""
+
+  - name: replace X11Forwarding
+    replace:
+     path: /etc/ssh/sshd_config
+     regexp: '^X11Forwarding.*yes'
+     replace: 'X11Forwarding no'
+    when: x11var.stdout is match("X11Forwarding.*yes.*")
+
+
+#  - name: Ensure SSH X11 forwarding is disabled
+#    shell: grep "^X11Forwarding no" /etc/ssh/sshd_config
+#    register: x11_for
+#    ignore_errors: yes
+#  - lineinfile:
+#       path: /etc/ssh/sshd_config
+#       line: X11Forwarding no
+#       state: present
+#       insertafter: yes
+#    when: x11_for.stdout == ""
 
   - name: Ensure SSH MaxAuthTries is set to 4 or less
     shell: grep "^MaxAuthTries" /etc/ssh/sshd_config
@@ -104,16 +125,40 @@
        state: present
        insertafter: yes
     when: empty_passwd.stdout == ""
-  - name: Ensure SSH PermitUserEnvironment is disabled
-    shell: grep '^PermitUserEnvironment no' /etc/ssh/sshd_config  
-    register: permit_user
+
+
+
+  - name: PermitUserEnv ssh
+    shell: grep '^PermitUserEnvironment' /etc/ssh/sshd_config
+    register: myvar
     ignore_errors: yes
-  - lineinfile: 
-      path: /etc/ssh/sshd_config
-      line: PermitUserEnvironment no
-      state: present
-      insertafter: yes
-    when: permit_user.stdout == ""
+
+  - name: add PermitUserEnvironment
+    lineinfile:
+     line: PermitUserEnvironment no
+     state: present
+     path: /etc/ssh/sshd_config
+    when: myvar.stdout == ""
+
+  - name: replace PermitUserEnvironment
+    replace:
+     path: /etc/ssh/sshd_config
+     regexp: '^PermitUserEnvironment.*yes'
+     replace: 'PermitUserEnvironment no'
+    when: myvar.stdout is match("PermitUserEnvironment.*yes.*")
+
+
+
+#  - name: Ensure SSH PermitUserEnvironment is disabled
+#    shell: grep '^PermitUserEnvironment no' /etc/ssh/sshd_config  
+#    register: permit_user
+#    ignore_errors: yes
+#  - lineinfile: 
+#      path: /etc/ssh/sshd_config
+#      line: PermitUserEnvironment no
+#      state: present
+#      insertafter: yes
+#    when: permit_user.stdout == ""
 
   - name: Ensure only approved MAC algorithms are used
     shell: grep "MACs" /etc/ssh/sshd_config
@@ -189,6 +234,7 @@
      src: /etc/security/pwquality.conf
      dest: /usr/share/cis
      remote_src: yes
+    ignore_errors: yes
 
 
 #######################

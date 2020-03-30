@@ -1,0 +1,14 @@
+---
+- hosts: test
+  gather_facts: no
+  tasks:
+  - name: sysctl
+    sysctl:
+     name: fs.suid_dumpable
+     value: 0
+     sysctl_set: yes
+     state: present
+     reload: yes     
+
+
+ 

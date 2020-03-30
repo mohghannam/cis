@@ -18,7 +18,7 @@
       line: install isofs /bin/true
       insertafter: yes
       create: yes
-    when: isofs_check.stdout != "" or isofs_disabled == ""
+    when: isofs_check.stdout != "" or isofs_disabled.stdout == ""
 
   - name: unload module
     shell: rmmod isofs
@@ -63,7 +63,7 @@
       line: install udf /bin/true
       insertafter: yes
       create: yes
-    when: udf_check.stdout != "" or udf_disabled == ""
+    when: udf_check.stdout != "" or udf_disabled.stdout == ""
 
   - name: unload module
     shell: rmmod udf

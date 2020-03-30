@@ -18,6 +18,10 @@
   - shell: "> /usr/share/cis/tasks-status.yml"
 
 
+  - name: isntalling "libselinux-python"
+    yum:
+      name: libselinux-python
+      state: present
   - name: setting selinux
     copy:
       src: /etc/selinux/config
@@ -127,7 +131,7 @@
     ignore_errors: yes
 
   - name: reconfigure /etc/issue
-    shell: echo "Authorized uses only. All activity may be monitored and reported." > /etc/issue
+    shell: echo "All activities performed on this system will be monitored." > /etc/issue
     when: check_issue.stdout != ""
 
 
@@ -140,7 +144,7 @@
     ignore_errors: yes
 
   - name: reconfigure /etc/issue.net
-    shell: echo "Authorized uses only. All activity may be monitored and reported." > /etc/issue.net
+    shell: echo "All activities performed on this system will be monitored." > /etc/issue.net
     when: check_issuenet.stdout != ""
 
 
@@ -224,7 +228,7 @@
 
   - name: change motd
     copy:
-     content: "Authorized uses only. All activity may be monitored and reported\n"
+     content: "All activities performed on this system will be monitored."
      dest: /etc/motd
 
   - name: mail transfer agent local mode only

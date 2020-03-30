@@ -124,7 +124,6 @@
      state: present
     register: ansible_facts
     ignore_errors: yes
-
   - debug:
      msg: " the data are:  {{ ansible_facts['changed'] }}"
   - lineinfile:

@@ -547,8 +547,12 @@
     shell: chkconfig --list syslog-ng | grep '2:on.*3:on.*4:on.5:on'
     ignore_errors: yes
     register: syslogng_status
+    ignore_errors: yes
   - name: enabling syslog-ng
-    shell: chkconfig syslog-ng on
+    service:
+     name: syslog-ng
+     enabled: yes 
+    ignore_errors: yes
     when: syslogng_status.stdout == ""
   - lineinfile:
      path: /usr/share/cis/tasks-status.yml

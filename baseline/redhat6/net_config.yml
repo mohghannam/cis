@@ -2,118 +2,6 @@
 - hosts: test
   tasks:
 
-  - name: copy sysctl.conf
-    copy:
-     src: /etc/sysctl.conf
-     dest: /usr/share/cis/sysctl.conf
-     remote_src: yes
-     force: no
-
-  - sysctl:
-       name: net.ipv4.ip_forward
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.all.send_redirects
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.send_redirects
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.all.accept_source_route
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.accept_source_route
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.all.accept_redirects
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.accept_redirects
-       value: '0'
-       sysctl_set: yes
-
-
-  - sysctl:
-       name: net.ipv4.conf.all.secure_redirects
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.secure_redirects
-       value: '0'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.all.log_martians
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.log_martians
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.icmp_echo_ignore_broadcasts
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.icmp_ignore_bogus_error_responses
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.all.rp_filter
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-       name: net.ipv4.conf.default.rp_filter
-       value: '1'
-       sysctl_set: yes
-
-  - sysctl:
-     name: net.ipv6.conf.all.accept_ra
-     value: '0'
-     sysctl_set: yes
-     ignoreerrors: yes
-
-  - sysctl:
-     name: net.ipv6.conf.default.accept_ra
-     value: '0'
-     sysctl_set: yes
-     ignoreerrors: yes
-
-  - sysctl:
-     name: net.ipv6.conf.all.accept_redirects
-     value: '0'
-     sysctl_set: yes
-     ignoreerrors: yes
-
-  - sysctl:
-     name: net.ipv6.conf.default.accept_redirects
-     value: '0'
-     sysctl_set: yes
-     ignoreerrors: yes
-
-  - sysctl:
-     name: net.ipv4.tcp_syncookies
-     value: '1'
-     sysctl_set: yes
-                            
   - name: Ensure ipv6 is disabled, no ipv6 entry
     shell: grep '^\s*kernel.*ipv6.disable=1.*' /boot/grub/grub.conf
     ignore_errors: yes
@@ -139,6 +27,13 @@
      owner: root
      group: root
      mode: '644'
+
+  #- name: Enure /etc/hosts.deny is configured
+  #  lineinfile:
+  #   path: /etc/hosts.deny
+  #   line: "ALL: ALL"
+  #   state: present
+
   
   - name: disabling ipv6
     lineinfile:
@@ -171,19 +66,5 @@
      force: no
 
   - name: remove root access from securetty
-    shell: echo "" > /etc/securetty
-
-  handlers:
-  - name: sleep
-    pause:
-     seconds: 7
-  - name: setting net ipv4 flush param
-    shell: sysctl -w net.ipv4.route.flush=1
-
-  - name: reload the rsyslogd configuration
-    shell: pkill -HUP rsyslogd
-
-  - name: reload the syslog-ng configuration
-    shell: pkill -HUP syslog-ng
-
+    shell: "> /etc/securetty"
 

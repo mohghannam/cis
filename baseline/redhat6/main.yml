@@ -1,10 +1,9 @@
 ---
 - hosts: test
   tasks:
+
   - debug:
      msg: "Starting to implement CIS standards"
-  - debug:
-     msg: "{{ ansible_date_time.date }}##{{ ansible_date_time.time }} "
 
 - name: intial setup phase
   import_playbook: intial_setup.yml
@@ -29,12 +28,18 @@
 
 - name: System Maintenance
   import_playbook: system_maintenance.yml
+
+- name: Kernel Parameters sysctl
+  import_playbook: kernel-params.yml
   
 - name: network config
   import_playbook: net_config.yml
 
 - name: modules
   import_playbook: modules.yml
+
+- name: audit
+  import_playbook: audit.yml
 
 - name: logs
   import_playbook: logs.yml

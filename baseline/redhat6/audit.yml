@@ -1,0 +1,68 @@
+---
+- hosts: test 
+  gather_facts: yes
+  name: Configure audit Rules
+  tasks:
+  - name: backup default audit rules.
+    copy:
+      src: /etc/audit/audit.rules
+      dest: /usr/share/cis
+      remote_src: yes
+
+  - name: backup default audit configuration
+    copy: 
+      src: /etc/audit/auditd.conf
+      dest: /usr/share/cis
+      remote_src: yes
+
+  - replace:
+     path: /etc/audit/auditd.conf
+     regexp: '^admin_space_left_action.*'
+     replace: 'admin_space_left_action = halt'
+     backup: yes
+ 
+  - replace:
+     path: /etc/audit/auditd.conf
+     regexp: '^action_mail_acct.*'
+     replace: 'action_mail_acct = root'
+     backup: yes
+  
+  - replace:
+       path: /etc/audit/auditd.conf
+       regexp: '^space_left_action.*'
+       replace: 'space_left_action = email' 
+       backup: yes 
+  
+  - name:  Ensure audit logs are not automatically deleted
+    lineinfile:
+      path: /etc/audit/auditd.conf
+      regexp: max_log_file_action
+      state: absent
+  - lineinfile:
+      path: /etc/audit/auditd.conf
+      line: max_log_file_action = keep_logs
+      state: present
+
+
+  - name: check whether system is 32 or 64 arch
+    shell: getconf LONG_BIT
+    register: system_arch
+    ignore_errors: yes
+
+  - name: copy file with audit rules for 32 arch
+    copy:     
+     src: ./audit_32
+     dest: /etc/audit/audit.rules
+    when: system_arch.stdout == "32"
+
+  - name: copy file with audit rules for 64 arch
+    copy: 
+     src: ./audit_64
+     dest: /etc/audit/audit.rules
+    when: system_arch.stdout == "64"
+
+
+  - service:
+      name: auditd
+      state: restarted
+
