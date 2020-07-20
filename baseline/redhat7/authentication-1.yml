@@ -1,0 +1,30 @@
+- name: password reuse limit password-auth
+    shell: egrep -i '^password\s+required' /etc/pam.d/password-auth
+    register: pass_check
+    ignore_errors: yes
+  - debug:
+      msg: "{{ pass_check }} "
+
+
+  - name: adding kernel boot parm
+    lineinfile:
+      path: /etc/pam.d/password-auth
+      line: "{{ pass_check['stdout'] }}"
+      state: absent
+
+  - shell: "> /usr/share/cis/temp_password-auth"
+  - name: write in temp file
+    lineinfile:
+      path: /usr/share/cis/temp_password-auth
+      line: "{{ pass_check['stdout'] }}"
+      state: present
+      create: yes
+  - shell: cat /usr/share/cis/temp_password-auth | cut -d "\"" -f 2
+    register: line_pass
+
+  - debug:
+      msg: "{{ line_pass['stdout'] }}"
+  - lineinfile:
+      path: /etc/pam.d/password-auth
+      line: "{{line_pass['stdout']}} pam_pwhistory.so remember=5"
+
