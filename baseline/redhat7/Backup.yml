@@ -1,0 +1,12 @@
+---
+- hosts: os
+  gather_facts: no
+  name: Back-up the Server configuration
+  tasks:
+       - name: backup default audit rules.
+         copy:
+           src: /etc
+           dest: /usr/share/cis
+           remote_src: yes
+           force: no
+

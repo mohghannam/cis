@@ -1,7 +1,38 @@
 ---
 - hosts: os
-  gather_facts: yes
+  gather_facts: no
   tasks:
-  - name: printing the collected info
-    debug:
-      msg: "##############print: {{ ansible_facts['selinux'] }} "
+  #- name: printing the collected info
+    #debug:
+      #msg: "##############print: {{ ansible_facts['selinux'] }} "
+
+
+  - shell:  grep "umask 0" /etc/bashrc
+    register: mask_ch
+    ignore_errors: yes
+
+  - debug:
+     msg: "{{ mask_ch['stdout_lines'] }}"
+  - lineinfile:
+        path: /etc/bashrc
+        state: present
+        regexp: "{{ item }}"
+        line: "       umask 027"
+    with_items: "{{ mask_ch['stdout_lines'] }}"
+    when: 
+
+
+  - shell:  grep "umask 0" /etc/profile
+    register: mask_c
+    ignore_errors: yes
+
+  - debug:
+      msg: "{{ mask_c['stdout_lines'] }}"
+  - lineinfile:
+         path: /etc/profile
+         state: present
+         regexp: "{{ item }}"
+         line: "       umask 027"
+    with_items: "{{ mask_c['stdout_lines'] }}"
+
+

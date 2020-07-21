@@ -15,18 +15,20 @@
       group: root
       mode: '0644'
       state: touch
-  - shell: "> /usr/share/cis/tasks-status.yml"
+  #- shell: "> /usr/share/cis/tasks-status.yml"
 
   - name: taking backup of /etc/pam.d/system-auth
     copy:
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   - name: taking backup of /etc/pam.d/password-auth
     copy:
       src: /etc/pam.d/password-auth
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - name: Ensure password hashing algorithm is SHA-512
     shell: egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth  | grep sha512
@@ -159,6 +161,7 @@
     copy:
        src: /usr/lib/systemd/system/emergency.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/emergency.service
     register: check
     ignore_errors: yes
@@ -177,6 +180,7 @@
     copy:
        src: /usr/lib/systemd/system/rescue.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/rescue.service
     register: check
     ignore_errors: yes
@@ -193,6 +197,7 @@
     copy:
       src: /etc/security/limits.conf
       dest: /usr/share/cis 
+      force: no
   - lineinfile:
       path: /etc/security/limits.conf
       line: "* hard core 0"
@@ -207,6 +212,7 @@
      src: /etc/passwd
      dest: /usr/share/cis
      remote_src: yes
+     force: no
     when: passwd_backedup.stdout == ""
 
   - name: Ensure no legacy "+" entries exist in /etc/passwd
@@ -370,6 +376,7 @@
       src: /etc/securetty
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - shell: "> /etc/securetty"
 

@@ -7,6 +7,7 @@
       src: /etc/ssh/sshd_config
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   - file:
        path: /etc/ssh/sshd_config
        owner: root
@@ -181,6 +182,7 @@
      src: /etc/pam.d/password-auth
      dest: /usr/share/cis
      remote_src: yes
+     force: no
   
   - shell:  grep pam_pwquality.so /etc/pam.d/password-auth
     register: pam_con
@@ -197,6 +199,7 @@
      src: /etc/security/pwquality.conf
      dest: /usr/share/cis
      remote_src: yes
+     force: no
 
   - shell: grep ^minlen /etc/security/pwquality.conf
     register: minlen
@@ -266,6 +269,7 @@
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
       remote_src: yes  
+      force: no
 
   - blockinfile:
       path: /etc/pam.d/system-auth
@@ -315,6 +319,7 @@
       src: /etc/login.defs
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   
   - name: Ensure password expiration is 365 days or less (Scored)
     lineinfile:
@@ -354,6 +359,7 @@
       src: /etc/passwd
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - shell:  'grep "^root:" /etc/passwd | cut -f4 -d:'
     register: default_grp
@@ -366,26 +372,44 @@
       src: /etc/bashrc
       dest: /usr/share/cis
       remote_src: yes
-   
-  - lineinfile:
-      path: /etc/bashrc
-      line: umask 027
-      state: present
-      insertafter: yes
+      force: no
 
   - copy:
       src: /etc/profile
       dest: /usr/share/cis
       remote_src: yes
-  - shell:  grep "umask" /etc/profile
+      force: no
+
+  - shell:  grep "umask 0" /etc/bashrc
     register: mask_ch
     ignore_errors: yes
+
+  - debug:
+     msg: "{{ mask_ch['stdout_lines'] }}"
   - lineinfile:
-      path: /etc/profile
-      state: present
-      line: umask 027
-      insertafter: yes
-    when: mask_ch.stdout == ""
+        path: /etc/bashrc
+        state: present
+        regexp: "{{ item }}"
+        line: "       umask 027"
+    with_items: "{{ mask_ch['stdout_lines'] }}"
+    when:  mask_ch['stdout'] is defined
+
+
+  - shell:  grep "umask 0" /etc/profile
+    register: mask_c
+    ignore_errors: yes
+
+  - debug:
+      msg: "{{ mask_c['stdout_lines'] }}"
+  - lineinfile:
+         path: /etc/profile
+         state: present
+         regexp: "{{ item }}"
+         line: "       umask 027"
+    with_items: "{{ mask_c['stdout_lines'] }}"
+    when: mask_c['stdout'] is defined
+
+
 
   - name: Ensure default user shell timeout is 900 seconds or less
     shell: grep "^TMOUT" /etc/bashrc
@@ -412,6 +436,7 @@
       src: /etc/pam.d/su
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   
   - lineinfile:
        path: /etc/pam.d/su

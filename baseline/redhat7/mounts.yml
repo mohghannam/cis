@@ -2,6 +2,12 @@
 - hosts: os
   name: TMPFS playbook
   tasks:
+    - name: Taking a backup of fstab
+      copy:
+        src: /etc/fstab
+        dest: /usr/share/cis
+        remote_src: yes
+        force: no
     - name: Check whether TMPfs is mounted on dedicated partition
       debug: 
          msg: "The TMP is mounted on dedicated partition"

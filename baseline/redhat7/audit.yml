@@ -8,12 +8,14 @@
       src: /etc/audit/rules.d/audit.rules
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - name: backup default audit configuration
     copy: 
       src: /etc/audit/auditd.conf
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - replace:
      path: /etc/audit/auditd.conf

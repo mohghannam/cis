@@ -22,8 +22,8 @@
     cron:
       name: aide check
       weekday: "*"
-      minute: "1"
-      hour: "0"
+      minute: "0"
+      hour: "5"
       user: "root"
       job: "/usr/sbin/aide --check"
       cron_file: jobaid

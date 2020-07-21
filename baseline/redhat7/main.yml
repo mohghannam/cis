@@ -23,6 +23,9 @@
       state: touch
   - shell: "> /usr/share/cis/tasks-status.yml"
 
+
+- import_playbook: Backup.yml
+
 - name: Installing the Required Libraries and Packages
   import_playbook: pkg.yml
 
