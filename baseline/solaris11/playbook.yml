@@ -1,0 +1,52 @@
+---
+- name: Starting Hardening Solaris10 Operating system at
+  hosts: os
+  tasks:
+    - debug:
+         msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }}"
+
+    - name: Creating a destination for the scripts
+      file:
+        state: directory
+        path: ~/cis
+        mode: 0755
+    - name: Copying Solaris Scripts to the target
+      copy:
+        src: ./solaris-scripts
+        dest: ~/cis
+
+    - name: Disable Services
+      command: "sh ~/cis/solaris-scripts/2-deb.sh"
+
+    - pause:
+        seconds: 5
+
+    - name: Kernel Parameters
+      command: "sh ~/cis/solaris-scripts/3-dep.sh"
+
+    - pause:
+        seconds: 3
+
+    - name: Audit
+      command: "sh ~/cis/solaris-scripts/4-dep.sh"
+
+    - name: File and Directory permission
+      command: "sh ~/cis/solaris-scripts/5-dep.sh"
+
+    - name: System access
+      command: "sh ~/cis/solaris-scripts/6-dep.sh"
+
+    - name: User Accounts
+      command: "sh ~/cis/solaris-scripts/7-dep.sh"
+
+    - name: Warning Banners
+      command: "sh ~/cis/solaris-scripts/8-dep.sh"
+
+    - name: System Maintenance
+      command: "sh ~/cis/solaris-scripts/9-dep.sh"
+
+    - name: Running MCS
+      command: "sh ~/cis/solaris-scripts/mcs.sh"
+
+    - name: Check that MCS applied
+      command: "sh ~/cis/solaris-scripts/check.sh"
