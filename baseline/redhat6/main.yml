@@ -21,6 +21,9 @@
 - name: Install required packages
   import_playbook: pkg.yml
 
+- name: Implementing multiple diverse configurations
+  import_playbook: world-wide.yml
+
 - name: Service modifications
   import_playbook: service.yml
 
