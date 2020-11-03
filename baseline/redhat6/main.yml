@@ -4,9 +4,19 @@
 
   - debug:
      msg: "Starting to implement CIS standards"
+  - debug:
+        msg: |
+         "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }}  Version: {{ ansible_facts['distribution_version'] }}
+          Kernel Version: {{ ansible_facts['kernel'] }}"
+
+
 
 - name: intial setup phase
-  import_playbook: intial_setup.yml
+  import_playbook: initial_setup.yml
+
+- name: Backing up the system
+  import_playbook: backup.yml
+
 
 - name: Install required packages
   import_playbook: pkg.yml
@@ -29,8 +39,6 @@
 - name: System Maintenance
   import_playbook: system_maintenance.yml
 
-- name: Kernel Parameters sysctl
-  import_playbook: kernel-params.yml
   
 - name: network config
   import_playbook: net_config.yml
@@ -43,6 +51,9 @@
 
 - name: logs
   import_playbook: logs.yml
+
+- name: Kernel Parameters sysctl
+  import_playbook: kernel-params.yml
 
 - name: firewall
   import_playbook: firewall.yml

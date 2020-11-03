@@ -1,6 +1,6 @@
 ---
 - name: install the required rpms
-  hosts: redhat7 test
+  hosts: test
   tasks:
 
   - name: check whether gpgcheck is configured correctly
@@ -16,7 +16,15 @@
   - debug:
       msg: "{{ result_3 }}"
 
+  - name: update security packages
+    shell: yum update --security -y
 
+  - name: Updating the system
+    yum:
+       name: '*'
+       state: latest
+
+  
   - name: install aide
     yum:
       name: aide
@@ -57,6 +65,11 @@
     register: result
   - debug:
       msg: "the outcome of restoring the binaries {{ result }}"
+  - name: Instaling GDM package if found
+    yum:
+      name: GDM
+      state: present
+    ignore_errors: yes
 
   - name: remove prelink
     yum:

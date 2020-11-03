@@ -122,6 +122,7 @@
   - yum:
      name: syslog-ng
      state: present
+    ignore_errors: yes
     register: ansible_facts
   - debug:
      msg: " the data are:  {{ ansible_facts['changed'] }}"

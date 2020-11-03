@@ -1,0 +1,9 @@
+---
+- hosts: os
+  gather_facts: no
+  tasks: 
+  
+    - name: rebooting machine after hardening
+      reboot:
+         connect_timeout: 180
+         test_command: ls /etc 

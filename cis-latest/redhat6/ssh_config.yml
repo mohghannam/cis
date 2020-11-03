@@ -189,6 +189,7 @@
      src: /etc/security/pwquality.conf
      dest: /usr/share/cis
      remote_src: yes
+    ignore_errors: yes 
 
 
 #######################

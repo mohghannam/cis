@@ -1,0 +1,23 @@
+---
+- hosts: test 
+  name: Intial setup 
+  tasks:
+
+
+  - name: Pre-requisites for Backing up the server
+    file:
+       path: /usr/share/cis/etc-bkp
+       state: directory
+       owner: root
+       group: root
+       mode: '0744'
+ 
+  - shell: "ls -ld /usr/share/cis/etc-bkp/etc"
+    ignore_errors: yes
+    register: result
+       
+
+  - name: backup server configuration
+    shell: "cp -r /etc /usr/share/cis/etc-bkp/"
+    when: result['rc'] != 0
+
