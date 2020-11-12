@@ -1,0 +1,52 @@
+---
+- name: Starting Hardening Solaris10 Operating system 
+  hosts: os
+  tasks:
+    - debug:
+         msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} in machine: {{ ansible_facts['fqdn'] }}"
+
+    - name: Creating a destination for the scripts
+      file:
+        state: directory
+        path: ~/cis
+        mode: 0755
+    - name: Copying Solaris Scripts to the target
+      copy:
+        src: ./solaris-scripts
+        dest: ~/cis
+
+    - name: Disable Services
+      command: "sh ~/cis/solaris-scripts/2_services_deb_10.sh"
+
+    - pause:
+        seconds: 5
+
+    - name: Kernel Parameters
+      command: "sh ~/cis/solaris-scripts/3_kernel_deb_10.sh"
+
+    - pause:
+        seconds: 3
+
+    - name: Audit
+      command: "sh ~/cis/solaris-scripts/4_logging_deb_10.sh"
+
+    - pause:
+        seconds: 2
+
+    - name: File and Directory permission
+      command: "sh ~/cis/solaris-scripts/5_file_deb_10.sh"
+
+    - pause:
+        seconds: 2
+
+
+    - name: System access
+      command: "sh ~/cis/solaris-scripts/6_auth_dep_10.sh"
+
+    - pause:
+        seconds: 2
+
+
+    - name: User Accounts
+      command: "sh ~/cis/solaris-scripts/7_account_dep.sh"
+
