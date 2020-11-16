@@ -1,0 +1,12 @@
+---
+- name: Register servers to the capsule
+  hosts: servers
+  tasks:
+  - name: Registering
+    rhn_register:
+       state: present
+       username: joe_user
+       password: somepass'
+       server_url: https://xmlrpc.my.satellite/XMLRPC
+
+  

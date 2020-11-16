@@ -1,0 +1,19 @@
+after analysis and code modification against the scan report,We've got these following comments:
+*******************
+1-Reloading the auditd service to put the new configuration in action requires a system reboot.this means running the whole automated hardening process would require a downtime.  
+2- The Scan has showed that some partitions like /tmp is missing mount options,while these partitions do n't exist.the automation process firstly checks whether the partition does already exist and then apply or modify their mount options.
+3- The action of setting password for the grub can't be taken by The automation engine.
+4- The action of configuring the tcp wrappers(/etc/hosts.deny../etc/hosts.allow) with the required IPs can't be automated,as the automation engine can't specify these IPs.
+5- Applying the required firewall policies and rules will always fail as the firewall services are disable and stopped on the machine,but the scan shows that as a threat
+6- To Ensure rsyslog is configured to send logs to a remote log host,the automation engine can't specify the remote log host IP.
+
+7- The automation engine couldn't find the syslog-ng to configure it to  ensure syslog-ng default file permissions configured
+8- Automation engine can't Ensure SSH root login is disabled as it is based on ssh root access
+9- Ensure SSH access is limited for specific users and/or groups,the automation engine can't specify which users and groups should be allowed to access the servers by SSH.
+
+##########
+#Action:52
+##########
+######################
+#High Threats are done
+######################

@@ -1,0 +1,59 @@
+---
+- hosts: os
+  gather_facts: no
+  tasks:
+
+  - name: check whether system is 32 or 64 arch
+    shell: getconf LONG_BIT
+    register: system_arch
+    ignore_errors: yes
+
+  - debug: 
+      msg: " {{ system_arch }} "
+  
+
+  - shell: sysctl -a | grep  "fs.suid_dumpable = 0"
+    register: check_1
+    ignore_errors: yes
+
+  - debug:
+      msg: "the param is not defined properly {{ check_1 }}"
+    when: check_1 is not defined
+
+
+  - name: Ensure SSH Idle Timeout Interval is configured
+    shell: grep -i  "^ClientAliveInterval" /etc/ssh/sshd_config
+    register: client_alive
+    ignore_errors: yes
+  - debug:
+      msg: "##### {{ client_alive }}  "
+  - lineinfile:
+       path: /etc/ssh/sshd_config
+       line: ClientAliveInterval 300
+       state: present
+       insertafter: yes
+    when: client_alive.stdout == ""
+
+  - name: check whether gpgcheck is configured correctly
+    shell:   grep ^gpgcheck /etc/yum.repos.d/*
+    register: result_2
+  - debug:
+      msg: "{{ result_2 }}"
+  - shell: ls /etc/yum.repos.d
+    register: repos
+  - debug:
+        msg: "{{ repos }}"
+ 
+  - replace:
+     path: "/etc/yum.repos.d/{{ item }}"
+     regexp: "^gpgcheck=0"
+     replace: "gpgcheck=1" 
+    loop: "{{ repos.stdout_lines }}"
+  #- name: Update the repos to have gpgcheck enabled
+  #  yum_repository:
+  #     name: item 
+  #     gpgcheck: yes
+  #  loop: "{{ repos.stdout_lines }}"
+    
+      
+
