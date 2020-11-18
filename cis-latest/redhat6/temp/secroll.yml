@@ -1,9 +1,0 @@
----
-- hosts: test
-  tasks:
-   - name: rollback /etc/securetty
-     copy:
-      src: /usr/share/cis/securetty
-      dest: /etc/securetty
-      remote_src: yes
-      

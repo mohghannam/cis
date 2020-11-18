@@ -1,9 +1,9 @@
 ---
-- name: Starting Hardening Solaris10 Operating system at
+- name: Starting Hardening Solaris11 Operating system 
   hosts: os
   tasks:
     - debug:
-         msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }}"
+         msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} in machine: {{ ansible_facts['fqdn'] }}"
 
     - name: Creating a destination for the scripts
       file:
@@ -30,23 +30,52 @@
     - name: Audit
       command: "sh ~/cis/solaris-scripts/4-dep.sh"
 
+    - pause:
+        seconds: 3
+
     - name: File and Directory permission
       command: "sh ~/cis/solaris-scripts/5-dep.sh"
+
+    - pause:
+        seconds: 2
+
 
     - name: System access
       command: "sh ~/cis/solaris-scripts/6-dep.sh"
 
+    - pause:
+        seconds: 2
+
+
     - name: User Accounts
       command: "sh ~/cis/solaris-scripts/7-dep.sh"
+
+    - pause:
+        seconds: 2
+
 
     - name: Warning Banners
       command: "sh ~/cis/solaris-scripts/8-dep.sh"
 
+    - pause:
+        seconds: 2
+
+
     - name: System Maintenance
       command: "sh ~/cis/solaris-scripts/9-dep.sh"
+
+    - pause:
+        seconds: 2
+
 
     - name: Running MCS
       command: "sh ~/cis/solaris-scripts/mcs.sh"
 
+    - pause:
+        seconds: 2
+
+
     - name: Check that MCS applied
       command: "sh ~/cis/solaris-scripts/check.sh"
+
+

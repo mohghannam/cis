@@ -1,9 +1,0 @@
----
-- hosts: os
-  gather_facts: no
-  tasks:
-  - name: install and update the latest security pks
-    yum:
-      security: yes
-      state: latest
-

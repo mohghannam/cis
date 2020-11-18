@@ -6,7 +6,7 @@
       msg: Starting certifying The dataCenter with CIS Standards
 
   - debug:
-      msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} "
+      msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} Machine: {{ ansible_facts['fqdn'] }}"
 
   - name: Needed configuration for Roll-Back
     file:
@@ -55,4 +55,7 @@
 
 - name: configure Firewall 
   import_playbook: firewall.yml
+
+- name: Rebooting Play
+  import_playbook: reboot.yml
 

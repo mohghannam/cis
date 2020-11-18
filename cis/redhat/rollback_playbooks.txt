@@ -1,9 +1,0 @@
-mounts-rollback.yml
-modules-rollback.yml
-pkg-rollback.yml
-port-rollback.yml
-roll-back1.yml
-service-rollback.yml
-ssh_config-rollback.yml
-firewall-rollback.yml
-main-rollback.yml
