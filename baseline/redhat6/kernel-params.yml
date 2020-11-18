@@ -8,6 +8,21 @@
     copy:
       src: /etc/sysctl.conf
       dest: /usr/share/cis
+      remote_src: yes
+      force: no
+
+  - shell: grep 'SINGLE=/sbin/sulogin' /etc/sysconfig/init
+    register: check
+    ignore_errors: yes
+  - name: configuring /etc/sysconfig/init
+    lineinfile:
+         path: /etc/sysconfig/init
+         regexp: '^SINGLE='
+         line: SINGLE=/sbin/sulogin
+         insertafter: yes
+         state: present
+    when: check.stdout == ""
+
 
   - name: configure kernel param  fs.suid_dumpable
     sysctl:
