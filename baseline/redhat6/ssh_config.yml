@@ -279,13 +279,13 @@
   - name: Ensure password reuse is limited
     lineinfile:
        path: /etc/pam.d/password-auth
-       line: password sufficient pam_unix.so remember=5
+       line: password sufficient pam_unix.so remember=12
        state: present
        insertafter: yes
 
   - lineinfile:
        path: /etc/pam.d/system-auth
-       line: password sufficient pam_unix.so remember=5
+       line: password sufficient pam_unix.so remember=12
        state: present
        insertafter: yes
 
@@ -333,7 +333,7 @@
   - replace: 
       path: /etc/login.defs
       regexp: '^PASS_MIN_DAYS.*'
-      replace: PASS_MIN_DAYS 7
+      replace: PASS_MIN_DAYS 1
       backup: yes
     when: passwd_change.stdout == ""
   

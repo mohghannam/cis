@@ -1,0 +1,8 @@
+---
+- name: Rebooting the machine
+  hosts: os
+  tasks:
+    - reboot:
+         msg: "Rebooting the Machine with a hostname: {{ ansible_facts['fqdn'] }}"
+         #reboot_timeout: "1200"
+

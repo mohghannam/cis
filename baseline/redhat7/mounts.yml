@@ -10,9 +10,9 @@
 
     - name: configure tmpfs with the required options
       copy:
-         src: /root/cis/redhat/tmp.mount
+         src: ./tmp.mount
          dest: /etc/systemd/system/local-fs.target.wants/tmp.mount
-         #remote_src: yes
+         #remote_src: no
       loop: "{{ ansible_mounts }}"
       when: item.mount == "/tmp"
 
