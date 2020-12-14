@@ -1,3 +1,4 @@
+#!/bin/bash
 # File/Directory Permissions/Access
 
         # 5.1 Set daemon umask
