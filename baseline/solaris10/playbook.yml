@@ -10,43 +10,49 @@
         state: directory
         path: ~/cis
         mode: 0755
-    - name: Copying Solaris Scripts to the target
-      copy:
-        src: ./solaris-scripts
-        dest: ~/cis
+
+    - name: Transfer Hardening scripts
+      script: transfer.sh "{{ ansible_facts['default_ipv4']['address'] }}"
+      delegate_to: localhost
+
+    - name: preparing scripts
+      script: preparing.sh
 
     - name: Disable Services
-      command: "sh ~/cis/solaris-scripts/2_services_deb_10.sh"
+      command: "sh ~/cis/solaris-scripts/s1.sh"
+
+    - name: disable services2
+      command: "sh ~/cis/solaris-scripts/s2.sh"
 
     - pause:
-        seconds: 5
+        seconds: 10
 
     - name: Kernel Parameters
-      command: "sh ~/cis/solaris-scripts/3_kernel_deb_10.sh"
+      command: "sh ~/cis/solaris-scripts/s3.sh"
 
     - pause:
         seconds: 3
 
     - name: Audit
-      command: "sh ~/cis/solaris-scripts/4_logging_deb_10.sh"
+      command: "sh ~/cis/solaris-scripts/s4.sh"
 
     - pause:
         seconds: 2
 
     - name: File and Directory permission
-      command: "sh ~/cis/solaris-scripts/5_file_deb_10.sh"
+      command: "sh ~/cis/solaris-scripts/s5.sh"
 
     - pause:
         seconds: 2
 
 
     - name: System access
-      command: "sh ~/cis/solaris-scripts/6_auth_dep_10.sh"
+      command: "sh ~/cis/solaris-scripts/s6.sh"
 
     - pause:
         seconds: 2
 
 
     - name: User Accounts
-      command: "sh ~/cis/solaris-scripts/7_account_dep.sh"
+      command: "sh ~/cis/solaris-scripts/s7.sh"
 
