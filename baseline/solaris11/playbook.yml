@@ -1,6 +1,6 @@
 ---
 - name: Starting Hardening Solaris11 Operating system 
-  hosts: os
+  hosts: test
   tasks:
     - debug:
          msg: "Run at: {{ ansible_date_time.date }} / {{ ansible_date_time.time }} in machine: {{ ansible_facts['fqdn'] }}"

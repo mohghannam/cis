@@ -19,40 +19,40 @@
       script: preparing.sh
 
     - name: Disable Services
-      command: "sh ~/cis/solaris-scripts/s1.sh"
+      command: "~/cis/solaris-scripts/s1.sh"
 
     - name: disable services2
-      command: "sh ~/cis/solaris-scripts/s2.sh"
+      command: "~/cis/solaris-scripts/s2.sh"
 
     - pause:
         seconds: 10
 
     - name: Kernel Parameters
-      command: "sh ~/cis/solaris-scripts/s3.sh"
+      command: "~/cis/solaris-scripts/s3.sh"
 
     - pause:
         seconds: 3
 
     - name: Audit
-      command: "sh ~/cis/solaris-scripts/s4.sh"
+      command: "~/cis/solaris-scripts/s4.sh"
 
     - pause:
         seconds: 2
 
     - name: File and Directory permission
-      command: "sh ~/cis/solaris-scripts/s5.sh"
+      command: "~/cis/solaris-scripts/s5.sh"
 
     - pause:
         seconds: 2
 
 
     - name: System access
-      command: "sh ~/cis/solaris-scripts/s6.sh"
+      command: "/cis/solaris-scripts/s6.sh"
 
     - pause:
         seconds: 2
 
 
     - name: User Accounts
-      command: "sh ~/cis/solaris-scripts/s7.sh"
+      command: "~/cis/solaris-scripts/s7.sh"
 
