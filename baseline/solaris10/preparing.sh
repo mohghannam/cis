@@ -13,3 +13,5 @@ dos2unix ~/cis/solaris-scripts/5_file_deb_10.sh > s5.sh
 dos2unix ~/cis/solaris-scripts/5_file_deb_10.sh > s6.sh
 
 dos2unix ~/cis/solaris-scripts/7_account_dep.sh > s7.sh
+
+chmod u+x ~/cis/solaris-scripts/*
