@@ -35,6 +35,16 @@
       state: present
     when: host_based_check.stdout == ""
 
+  - name: Ensure SSH AllowTcpForwarding is disable
+    shell: grep "AllowTcpForwarding yes" /etc/ssh/sshd_config
+    register: tcp_forward_check
+    ignore_errors: yes
+  - lineinfile:
+      path: /etc/ssh/sshd_config
+      line: AllowTcpForwarding no
+      insertafter: yes
+      state: present
+    when: tcp_forward_check.stdout != ""
   - name: Ensure SSH LogLevel is set to INFO
     shell: grep "^LogLevel" /etc/ssh/sshd_config
     register: log_level
