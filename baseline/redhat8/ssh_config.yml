@@ -46,7 +46,6 @@
       state: present
     when: tcp_forward_check.stdout != ""
 
-
   - name: Ensure SSH LogLevel is set to INFO
     shell: grep "^LogLevel" /etc/ssh/sshd_config
     register: log_level
