@@ -334,12 +334,6 @@
       msg: "*WARNING....THERE IS DUPLICATE GROUPNAMES"
     when: groupnames_check.stdout != ""
 
-  - name: Ensure root login is restricted to system console
-    copy:
-      src: /etc/securetty
-      dest: /usr/share/cis
-      remote_src: yes
-
   - shell: "> /etc/securetty"
 
   handlers:

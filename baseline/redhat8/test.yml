@@ -3,5 +3,5 @@
   gather_facts: yes
   tasks:
   - name: printing the collected info
-    debug:
+    reboot:
       msg: "##############print: {{ ansible_facts['selinux'] }} "

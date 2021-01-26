@@ -185,25 +185,6 @@
       owner: root
       group: root
       mode: '644'
-  - name: ensure /etc/hosts.allow existence
-    copy:
-      src: /etc/hosts.allow
-      dest: /usr/share/cis
-  - file:
-      path: /etc/hosts.allow 
-      owner: root 
-      group: root
-      mode: '644'
-  
-  - name: ensure /etc/hosts.deny existence
-    copy:
-      src: /etc/hosts.deny
-      dest: /usr/share/cis
-  - file:
-     path: /etc/hosts.deny
-     owner: root
-     group: root
-     mode: '644'
 
   - name: verify /etc/issue.net has no /r /m /s
     shell:   yum list installed | grep -i gdm

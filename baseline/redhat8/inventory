@@ -1,4 +1,4 @@
-[servers]
+[os]
 
 172.16.202.173  ansible_python_interpreter=/usr/libexec/platform-python  register_to_capsule=false
 

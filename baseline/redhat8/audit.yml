@@ -234,7 +234,7 @@
     loop: "{{ ansible_mounts }}"
     when: item.mount == "/tmp"
  
-  - service:
-      name: auditd
-      state: reloaded
+  #- service:
+      #name: auditd
+      #state: reloaded
 

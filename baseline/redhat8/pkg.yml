@@ -29,29 +29,7 @@
       cron_file: jobaid
   - shell: crontab /etc/cron.d/jobaid
 
-  - name: install prelink
-    yum:
-     name: prelink
-     state: present
-    register: ansible_facts
-  - debug:
-     msg: " the data are:  {{ ansible_facts['changed'] }}"
-  - lineinfile:
-        path: /usr/share/cis/tasks-status.yml
-        line: "status3: {{ ansible_facts['changed'] }} ##prelink"
-        state: present
 
-
-  - name: restore binaries
-    shell: prelink -ua
-    register: result
-  - debug:
-      msg: "the outcome of restoring the binaries {{ result }}"
-
-  - name: remove prelink
-    yum:
-      name: prelink
-      state: absent
   - name: remove setroubleshoot
     yum:
       name: setroubleshoot
@@ -85,17 +63,6 @@
   - lineinfile:
         path: /usr/share/cis/tasks-status.yml
         line: "status6: {{ ansible_facts['changed'] }} ##libselinux"
-        state: present
-
-  - name: ensure tcp_wrappers is installed
-    yum:
-      name: tcp_wrappers
-      state: present
-  - debug:
-     msg: " the data are:  {{ ansible_facts['changed'] }}"
-  - lineinfile:
-        path: /usr/share/cis/tasks-status.yml
-        line: "status7: {{ ansible_facts['changed'] }} ##tcp_wrappers"
         state: present
 
   - name: verify the Xwindow package does not exist
@@ -197,6 +164,11 @@
         path: /usr/share/cis/tasks-status.yml
         line: "status15: {{ ansible_facts['changed'] }} ##syslog-ng action:installing"
         state: present
+
+  - name: Installing postfix
+    yum:
+      name: postfix
+      state: latest
 
     
   
