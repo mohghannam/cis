@@ -12,6 +12,7 @@
     copy:
       src: /etc/hosts.allow
       dest: /usr/share/cis
+      force: no
   - file:
       path: /etc/hosts.allow
       owner: root
@@ -22,6 +23,7 @@
     copy:
       src: /etc/hosts.deny
       dest: /usr/share/cis
+      force: no
   - file:
      path: /etc/hosts.deny
      owner: root

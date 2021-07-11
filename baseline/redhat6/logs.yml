@@ -14,6 +14,7 @@
   - copy:
       src: /etc/syslog-ng/syslog-ng.conf
       dest: /usr/share/cis
+      force: no
       remote_src: yes
     when: file_exist.stdout != ""
   - shell: grep ^options /etc/syslog-ng/syslog-ng.conf

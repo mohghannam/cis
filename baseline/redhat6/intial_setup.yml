@@ -26,6 +26,7 @@
     copy:
       src: /etc/selinux/config
       dest: /usr/share/cis
+      force: no
 
 
   - name: Ensure selinux is enforcing
@@ -37,11 +38,13 @@
     copy:
       src: /etc/sysconfig/init
       dest: /usr/share/cis
+      force: no
 
   - name: Ensure authentication for single user mode
     copy:
      src: /etc/sysconfig/init
      dest: /usr/share/cis/
+     force: no
   - shell: grep 'SINGLE=/sbin/sulogin' /etc/sysconfig/init
     register: check
     ignore_errors: yes
@@ -72,6 +75,7 @@
     copy:
       src: /etc/security/limits.conf
       dest: /usr/share/cis
+      force: no
   - lineinfile:
       path: /etc/security/limits.conf
       line: "* hard core 0"
@@ -101,6 +105,7 @@
   - copy:
      src: /boot/grub/grub.conf
      dest: /usr/share/cis
+     force: no
      remote_src: yes
     when: stat_result.stat.exists == True
 
@@ -126,6 +131,7 @@
     copy:
       src: /etc/issue
       dest: /usr/share/cis
+      force: no
   - shell:   egrep '(\\v|\\r|\\m|\\s)' /etc/issue
     register: check_issue
     ignore_errors: yes
@@ -139,6 +145,7 @@
     copy:
      src: /etc/issue.net
      dest: /usr/share/cis
+     force: no
   - shell:   egrep '(\\v|\\r|\\m|\\s)' /etc/issue.net
     register: check_issuenet
     ignore_errors: yes
@@ -152,6 +159,7 @@
     copy:
      src: /etc/motd
      dest:  /usr/share/cis
+     force: no
   - file:
       path: /etc/motd
       owner: root
@@ -184,6 +192,7 @@
     copy:
      src: /etc/dconf/profile/gdm
      dest: /usr/share/cis
+     force: no
      remote_src: yes
     when: check_gdm.stdout != ""
   - blockinfile:
@@ -200,6 +209,7 @@
     copy:
      src: /etc/dconf/db/gdm.d
      dest: /usr/share/cis
+     force: no
     when: check_gdm.stdout != ""
   - blockinfile:
       path: /etc/dconf/db/gdm.d/*
@@ -244,6 +254,7 @@
      src: /etc/postfix/main.cf
      remote_src: yes
      dest: /usr/share/cis
+     force: no
   - name: replace line in postfix
     replace:
      path: /etc/postfix/main.cf
@@ -256,6 +267,7 @@
      src: /etc/rsyslog.conf
      remote_src: yes
      dest: /usr/share/cis
+     force: no
 
   - name: check FileCreateMode
     shell: grep '^$FileCreateMode 0640' /etc/rsyslog.conf

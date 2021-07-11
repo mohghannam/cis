@@ -6,6 +6,7 @@
     copy: 
      src: /etc/fstab
      dest: /usr/share/cis
+     force: no
      remote_src: yes 
   - name: check /tmp
     mount:

@@ -159,6 +159,7 @@
      src: /etc/ntp.conf
      dest: /usr/share/cis
      remote_src: yes
+     force: no
 
   - shell: grep "^restrict" /etc/ntp.conf
     register: ntp_config_check

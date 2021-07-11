@@ -7,6 +7,7 @@
       src: /etc/ssh/sshd_config
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   - file:
        path: /etc/ssh/sshd_config
        owner: root
@@ -217,6 +218,7 @@
     copy: 
      src: /etc/pam.d/password-auth
      dest: /usr/share/cis
+     force: no
      remote_src: yes
   
   - shell:  grep 'pam_cracklib.so.*try_first_pass*.retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1' /etc/pam.d/password-auth
@@ -234,6 +236,7 @@
      src: /etc/security/pwquality.conf
      dest: /usr/share/cis
      remote_src: yes
+     force: no
     ignore_errors: yes
 
 
@@ -254,6 +257,7 @@
     copy:
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - shell:  grep 'pam_cracklib.so.*try_first_pass*.retry=3.*minlen=14.*dcredit=-1.*ucredit=-1.*ocredit=-1.*lcredit=-1' /etc/pam.d/system-auth
@@ -314,6 +318,7 @@
     copy:
       src: /etc/login.defs
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   
   - shell: grep '^PASS_MAX_DAYS.*90' /etc/login.defs
@@ -359,6 +364,7 @@
     copy:
       src: /etc/passwd
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - shell:  'grep "^root:" /etc/passwd | cut -f4 -d:'
@@ -371,6 +377,7 @@
     copy: 
       src: /etc/bashrc
       dest: /usr/share/cis
+      force: no
       remote_src: yes
    
   - shell:  grep "umask" /etc/bashrc
@@ -385,6 +392,7 @@
   - copy:
       src: /etc/profile
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   - shell:  grep "umask" /etc/profile
     register: mask_ch
@@ -420,6 +428,7 @@
     copy:
       src: /etc/pam.d/su
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   
   - shell: grep pam_wheel.so /etc/pam.d/su
