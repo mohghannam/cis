@@ -7,12 +7,14 @@
     copy:
       src: /etc/audit/rules.d/audit.rules
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - name: backup default audit configuration
     copy: 
       src: /etc/audit/auditd.conf
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - replace:

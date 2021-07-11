@@ -43,12 +43,14 @@
   - copy:
       src: /boot/grub2/grub.cfg
       dest: /usr/share/cis
+      force: no
       remote_src: yes
     when: stat_result.stat.exists == True
 
   - copy:
       src: /boot/grub2/grub.cfg
       dest: /usr/share/cis
+      force: no
       remote_src: yes
     when: user_cfg.stat.exists == True
 
@@ -86,6 +88,7 @@
     copy: 
       src: /etc/selinux/config
       dest: /usr/share/cis
+      force: no
      
   - selinux:
       policy: targeted
@@ -98,6 +101,7 @@
     copy:
       src: /etc/default/grub
       dest: /usr/share/cis
+      force: no
   - name: appending word in line
     shell: grep -i GRUB_CMDLINE_LINUX /etc/default/grub
     register: check_sys_lvm
@@ -140,6 +144,7 @@
     copy:
       src: /etc/issue
       dest: /usr/share/cis
+      force: no
   - shell:   egrep '(\\v|\\r|\\m|\\s)' /etc/issue
     register: check_issue
     ignore_errors: yes
@@ -155,6 +160,7 @@
     copy: 
      src: /etc/issue.net
      dest: /usr/share/cis
+     force: no
   - shell:   egrep '(\\v|\\r|\\m|\\s)' /etc/issue.net
     register: check_issuenet
     ignore_errors: yes
@@ -167,6 +173,7 @@
     copy:
      src: /etc/motd
      dest:  /usr/share/cis
+     force: no
   - file:
       path: /etc/motd
       owner: root
@@ -189,6 +196,7 @@
     copy:
       src: /etc/hosts.allow
       dest: /usr/share/cis
+      force: no
   - file:
       path: /etc/hosts.allow 
       owner: root 
@@ -199,6 +207,7 @@
     copy:
       src: /etc/hosts.deny
       dest: /usr/share/cis
+      force: no
   - file:
      path: /etc/hosts.deny
      owner: root
@@ -216,6 +225,7 @@
     copy:
      src: /etc/dconf/profile/gdm
      dest: /usr/share/cis
+     force: no
      remote_src: yes
     when: check_gdm.stdout != ""
   - blockinfile:
@@ -233,6 +243,7 @@
     copy:
      src: /etc/dconf/db/gdm.d
      dest: /usr/share/cis
+     force: no
     when: check_gdm.stdout != ""
   - blockinfile:
       path: /etc/dconf/db/gdm.d/*
@@ -280,6 +291,7 @@
     copy:
       src: /etc/ntp.conf
       dest: /usr/share/cis
+      force: no
       remote_src: yes
     when: ansible_facts['changed']
     #when: ntp_check.stdout == "" and chrony_check.stdout == "" 
@@ -310,10 +322,12 @@
     copy:
       src: /etc/rsyslog.conf
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   - copy:
       src: /etc/rsyslog.d
       dest: /usr/share/cis
+      force: no
 
   - name: Ensure remote rsyslog messages are only accepted on designated log hosts
     blockinfile:
@@ -346,6 +360,7 @@
   - copy:
       src: /etc/syslog-ng/syslog-ng.conf
       dest: /usr/share/cis
+      force: no
       remote_src: yes
     when: file_exist.stdout != ""
   - shell: grep ^options /etc/syslog-ng/syslog-ng.conf
@@ -476,6 +491,7 @@
     copy:
       src: /etc/postfix/main.cf
       dest: /usr/share/cis
+      force: no 
       remote_src: yes
   - lineinfile:
       path: /etc/postfix/main.cf

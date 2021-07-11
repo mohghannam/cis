@@ -8,6 +8,7 @@
     copy:
       src: /etc/sysctl.conf
       dest: /usr/share/cis
+      force: no
    
   - name: configure kernel param  fs.suid_dumpable
     sysctl:

@@ -6,6 +6,7 @@
     copy:
      src: /etc/fstab
      dest: /usr/share/cis/fstab
+     force: no
      remote_src: yes
 
   - name: Ensure separate partition exists for /tmp by starting tmp.mount serviceEnsure

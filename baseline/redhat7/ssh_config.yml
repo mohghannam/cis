@@ -7,6 +7,7 @@
       src: /etc/ssh/sshd_config
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   - file:
        path: /etc/ssh/sshd_config
        owner: root
@@ -180,6 +181,7 @@
     copy: 
      src: /etc/pam.d/password-auth
      dest: /usr/share/cis
+     force: no
      remote_src: yes
   
   - shell:  grep pam_pwquality.so /etc/pam.d/password-auth
@@ -196,6 +198,7 @@
   - copy:
      src: /etc/security/pwquality.conf
      dest: /usr/share/cis
+     force: no
      remote_src: yes
 
   - shell: grep ^minlen /etc/security/pwquality.conf
@@ -265,6 +268,7 @@
     copy: 
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
+      force: no
       remote_src: yes  
 
   - blockinfile:
@@ -314,6 +318,7 @@
     copy:
       src: /etc/login.defs
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   
   - name: Ensure password expiration is 365 days or less (Scored)
@@ -353,6 +358,7 @@
     copy:
       src: /etc/passwd
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - shell:  'grep "^root:" /etc/passwd | cut -f4 -d:'
@@ -366,6 +372,7 @@
       src: /etc/bashrc
       dest: /usr/share/cis
       remote_src: yes
+      force: no
    
   - lineinfile:
       path: /etc/bashrc
@@ -376,6 +383,7 @@
   - copy:
       src: /etc/profile
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   - shell:  grep "umask" /etc/profile
     register: mask_ch
@@ -411,6 +419,7 @@
     copy:
       src: /etc/pam.d/su
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   
   - lineinfile:
