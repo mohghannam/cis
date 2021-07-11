@@ -21,11 +21,13 @@
     copy:
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
+      force: no
       remote_src: yes
   - name: taking backup of /etc/pam.d/password-auth
     copy:
       src: /etc/pam.d/password-auth
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - name: Ensure password hashing algorithm is SHA-512
@@ -128,6 +130,7 @@
     copy:
        src: /usr/lib/systemd/system/emergency.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/emergency.service
     register: check
     ignore_errors: yes
@@ -146,6 +149,7 @@
     copy:
        src: /usr/lib/systemd/system/rescue.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/rescue.service
     register: check
     ignore_errors: yes
@@ -162,6 +166,7 @@
     copy:
       src: /etc/security/limits.conf
       dest: /usr/share/cis 
+      force: no
   - lineinfile:
       path: /etc/security/limits.conf
       line: "* hard core 0"
@@ -175,6 +180,7 @@
   - copy: 
      src: /etc/passwd
      dest: /usr/share/cis
+     force: no
      remote_src: yes
     when: passwd_backedup.stdout == ""
 
@@ -338,6 +344,7 @@
     copy:
       src: /etc/securetty
       dest: /usr/share/cis
+      force: no
       remote_src: yes
 
   - shell: "> /etc/securetty"
